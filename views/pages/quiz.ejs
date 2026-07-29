@@ -1,0 +1,83 @@
+<%- include('../partials/header', { title: 'Quiz: ' + lesson.title, bodyClass: 'ntut-learner-body' }) %>
+<%- include('../partials/nav', { isLearnerView: true, backUrl: '/lesson/' + lesson.id, learner: learner }) %>
+
+<main class="ntut-main-content">
+  
+  <div class="ntut-quiz-container">
+    <!-- Progress Indicator -->
+    <div style="width: 100%; max-width: 800px; display: flex; align-items: center; justify-content: space-between;">
+      <span style="font-size: 1.5rem; font-weight: 900; color: var(--ntut-dark);">Quiz Progress:</span>
+      <div class="ntut-kid-progress-bar-container" style="flex: 1; margin-left: 1.5rem; margin-top: 0; height: 20px;">
+        <div class="ntut-kid-progress-bar-fill" id="quiz-progress-fill" style="width: 0%;"></div>
+      </div>
+    </div>
+
+    <!-- Active Question Card -->
+    <div class="ntut-quiz-question-box" id="quiz-card-box">
+      <!-- Start Game Overlay -->
+      <div id="quiz-start-overlay" style="padding: 2rem; display: flex; flex-direction: column; align-items: center; cursor: pointer;" onclick="startQuiz()">
+        <div style="font-size: 6rem; margin-bottom: 1.5rem; animation: ntutBounce 1.5s infinite alternate ease-in-out;">🎮</div>
+        <h2 class="ntut-h1" style="font-family: var(--ntut-font-kid); font-weight: 900;">Ready to Play?</h2>
+        <p class="ntut-p" style="font-size: 1.3rem; margin-bottom: 2rem;">Show what you learned in: <%= lesson.title %></p>
+        <button class="ntut-btn ntut-btn-secondary ntut-kid-btn-giant" style="margin: 0; box-shadow: var(--ntut-shadow-flat-lg);">
+          Tap to Play!
+        </button>
+      </div>
+
+      <!-- Real Question Layout (hidden until started) -->
+      <div id="quiz-question-content" style="display: none;">
+        <div class="ntut-quiz-instruction-banner">
+          📢 <strong>Instruction:</strong> Read the question out loud and tap the correct answer box below!
+        </div>
+        <h2 class="ntut-quiz-text" id="question-text">Question Text</h2>
+        <div class="ntut-quiz-options" id="options-container">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Encouraging Modal Feedback Overlay -->
+  <div class="ntut-modal-overlay" id="feedback-modal-overlay">
+    <div class="ntut-feedback-modal">
+      <div class="ntut-feedback-emoji" id="feedback-emoji">🌟</div>
+      <h2 class="ntut-feedback-title" id="feedback-title">Correct!</h2>
+      <p class="ntut-feedback-subtitle" id="feedback-subtitle">Awesome job!</p>
+      <button class="ntut-btn ntut-btn-success ntut-kid-btn-giant" id="feedback-btn" style="margin: 0; width: 100%;">
+        Next ➡️
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<!-- Load Audio and Quiz Engines -->
+<script src="/js/audio.js"></script>
+<script src="/js/quiz.js"></script>
+<script>
+  let quizInstance = null;
+  const rawQuestions = <%- JSON.stringify(questions) %>;
+
+  function startQuiz() {
+    // 1. Initialize web audio context
+    NtutAudio.initAudio();
+    
+    // 2. Play starting sound
+    NtutAudio.playCue('success');
+
+    // 3. Hide start screen, reveal game board
+    document.getElementById('quiz-start-overlay').style.display = 'none';
+    document.getElementById('quiz-question-content').style.display = 'block';
+
+    // 4. Instantiate and play
+    quizInstance = new NtutQuizPlayer(rawQuestions, <%= lesson.id %>);
+    quizInstance.init();
+  }
+
+  // Clear Speech synthesis on unload
+  window.addEventListener('beforeunload', () => {
+    NtutAudio.stop();
+  });
+</script>
+
+<%- include('../partials/footer') %>

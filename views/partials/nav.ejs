@@ -1,0 +1,72 @@
+<% if (typeof isLearnerView !== 'undefined' && isLearnerView) { %>
+  <!-- Child-friendly Navigation Bar -->
+  <header class="ntut-kid-header" id="nav-child-header">
+    <% if (typeof backUrl !== 'undefined') { %>
+      <a href="<%= backUrl %>" class="ntut-kid-back-link" id="btn-back">
+        ⬅️ Back
+      </a>
+    <% } else { %>
+      <a href="/learner-dashboard" class="ntut-kid-back-link" id="btn-back-default">
+        🏠 Home
+      </a>
+    <% } %>
+    
+    <div class="ntut-nav-logo">
+      <span class="ntut-logo-icon">T</span> TutorToon
+    </div>
+
+    <% if (typeof learner !== 'undefined' && learner) { %>
+      <div class="ntut-kid-profile-badge" id="learner-profile-badge">
+        <div class="ntut-kid-badge-avatar ntut-avatar-<%= learner.avatar %>">
+          <%= learner.avatar === 'bunny' ? '🐰' : 
+              learner.avatar === 'bear' ? '🐻' : 
+              learner.avatar === 'cat' ? '🐱' : 
+              learner.avatar === 'fox' ? '🦊' : 
+              learner.avatar === 'lion' ? '🦁' : '🐼' %>
+        </div>
+        <span class="ntut-kid-badge-name"><%= learner.name %></span>
+      </div>
+    <% } %>
+  </header>
+<% } else { %>
+  <!-- Standard Parent/Teacher Dashboard Navigation Bar -->
+  <nav class="ntut-navbar" id="nav-adult-header">
+    <a href="/" class="ntut-nav-logo">
+      <span class="ntut-logo-icon">T</span> TutorToon
+    </a>
+
+    <div class="ntut-nav-links">
+      <% if (typeof user !== 'undefined' && user) { %>
+        <span class="ntut-nav-link" id="user-display">
+          Welcome, <strong><%= user.name %></strong> 
+          <span class="ntut-badge <%= user.role === 'teacher_admin' ? 'ntut-badge-math' : 'ntut-badge-success' %>">
+            <%= user.role === 'teacher_admin' ? 'Teacher' : 'Parent' %>
+          </span>
+        </span>
+
+        <% if (user.role === 'parent') { %>
+          <a href="/parent-dashboard" class="ntut-btn ntut-btn-outline" id="nav-link-dashboard">
+            Dashboard
+          </a>
+          <a href="/learner-select" class="ntut-btn ntut-btn-success" id="nav-link-play">
+            🎮 Play Portal
+          </a>
+        <% } else if (user.role === 'teacher_admin') { %>
+          <a href="/teacher-dashboard" class="ntut-btn ntut-btn-outline" id="nav-link-dashboard">
+            Teacher Panel
+          </a>
+          <a href="/learner-select" class="ntut-btn ntut-btn-success" id="nav-link-play">
+            👁️ Preview Play
+          </a>
+        <% } %>
+
+        <a href="/logout" class="ntut-btn ntut-btn-danger" id="nav-link-logout">
+          Logout
+        </a>
+      <% } else { %>
+        <a href="/login" class="ntut-btn ntut-btn-outline" id="nav-link-login">Login</a>
+        <a href="/register" class="ntut-btn ntut-btn-primary" id="nav-link-register">Sign Up</a>
+      <% } %>
+    </div>
+  </nav>
+<% } %>

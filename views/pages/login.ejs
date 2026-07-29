@@ -1,0 +1,99 @@
+<%- include('../partials/header', { title: 'Login' }) %>
+<%- include('../partials/nav') %>
+
+<main class="ntut-main-content" style="display: flex; align-items: center; justify-content: center; min-height: 70vh;">
+  <div class="ntut-card" style="width: 100%; max-width: 450px; padding: 2.5rem;">
+    <div class="ntut-card-header" style="justify-content: center; border-bottom: none; margin-bottom: 1.5rem;">
+      <h1 class="ntut-h1" style="font-family: var(--ntut-font-kid); font-weight: 900; margin-bottom: 0;">Log In to TutorToon</h1>
+    </div>
+
+    <!-- Message Alerts -->
+    <div id="alert-box" style="display: none;"></div>
+    
+    <% if (error) { %>
+      <div class="ntut-alert ntut-alert-danger" id="login-error-alert"><%= error %></div>
+    <% } %>
+    <% if (success) { %>
+      <div class="ntut-alert ntut-alert-success" id="login-success-alert"><%= success %></div>
+    <% } %>
+
+    <form id="login-form">
+      <div class="ntut-form-group">
+        <label for="email" class="ntut-form-label">Email Address</label>
+        <input type="email" id="email" name="email" class="ntut-form-input" placeholder="email@example.com" required autocomplete="email">
+      </div>
+      
+      <div class="ntut-form-group">
+        <label for="password" class="ntut-form-label">Password</label>
+        <input type="password" id="password" name="password" class="ntut-form-input" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+
+      <button type="submit" class="ntut-btn ntut-btn-primary" style="width: 100%; margin-top: 1rem; font-size: 1.1rem;" id="login-btn-submit">
+        Sign In
+      </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 1.5rem; font-size: 0.95rem;">
+      Don't have an account? <a href="/register" style="color: var(--ntut-primary); font-weight: 600;">Create account</a>
+    </div>
+  </div>
+</main>
+
+<script>
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const alertBox = document.getElementById('alert-box');
+    const submitBtn = document.getElementById('login-btn-submit');
+    
+    // Clear old state warnings
+    const oldErr = document.getElementById('login-error-alert');
+    const oldSucc = document.getElementById('login-success-alert');
+    if (oldErr) oldErr.style.display = 'none';
+    if (oldSucc) oldSucc.style.display = 'none';
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Signing in...';
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok || data.error) {
+        alertBox.className = 'ntut-alert ntut-alert-danger';
+        alertBox.innerText = data.error || 'Invalid credentials';
+        alertBox.style.display = 'flex';
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Sign In';
+      } else {
+        alertBox.className = 'ntut-alert ntut-alert-success';
+        alertBox.innerText = 'Login successful! Redirecting...';
+        alertBox.style.display = 'flex';
+        
+        // Redirect based on user role
+        setTimeout(() => {
+          if (data.user.role === 'teacher_admin') {
+            window.location.href = '/teacher-dashboard';
+          } else {
+            window.location.href = '/parent-dashboard';
+          }
+        }, 800);
+      }
+    } catch (err) {
+      console.error(err);
+      alertBox.className = 'ntut-alert ntut-alert-danger';
+      alertBox.innerText = 'Network error. Please try again.';
+      alertBox.style.display = 'flex';
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Sign In';
+    }
+  });
+</script>
+
+<%- include('../partials/footer') %>

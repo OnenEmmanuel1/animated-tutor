@@ -1,0 +1,1619 @@
+/*
+ * TutorToon - Custom Flat CSS Styling (public/css/style.css)
+ * CSS Prefix: ntut-*
+ * NO gradients are used anywhere in this file. Only solid flat color tokens.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Nunito:wght@400;600;700;900&display=swap');
+
+:root {
+  /* Common System Colors (Flat) */
+  --ntut-primary: #3b82f6;      /* Flat Blue */
+  --ntut-primary-hover: #2563eb;
+  --ntut-secondary: #ec4899;    /* Flat Pink */
+  --ntut-secondary-hover: #db2777;
+  --ntut-success: #10b981;      /* Flat Green */
+  --ntut-warning: #f59e0b;      /* Flat Amber */
+  --ntut-danger: #ef4444;       /* Flat Red */
+  
+  --ntut-dark: #1f2937;         /* Flat Slate Dark */
+  --ntut-light: #f3f4f6;        /* Flat Light Gray */
+  --ntut-white: #ffffff;
+  
+  --ntut-border: #e5e7eb;
+  --ntut-text-dark: #111827;
+  --ntut-text-muted: #6b7280;
+  
+  /* Learner Dashboard Solid Colors (Vibrant & Playful) */
+  --ntut-kid-blue: #60a5fa;
+  --ntut-kid-pink: #f472b6;
+  --ntut-kid-green: #34d399;
+  --ntut-kid-yellow: #fbbf24;
+  --ntut-kid-orange: #fb923c;
+  --ntut-kid-purple: #c084fc;
+  --ntut-kid-teal: #2dd4bf;
+  --ntut-kid-bg: #f0fdf4;       /* Pastel Mint */
+  
+  /* Fonts */
+  --ntut-font-admin: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --ntut-font-kid: 'Nunito', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Borders & Shadows */
+  --ntut-radius-sm: 8px;
+  --ntut-radius-md: 16px;
+  --ntut-radius-lg: 24px;
+  --ntut-shadow-flat: 4px 4px 0px #1f2937;
+  --ntut-shadow-flat-sm: 2px 2px 0px #1f2937;
+  --ntut-shadow-flat-lg: 8px 8px 0px #1f2937;
+  --ntut-shadow-soft: 0px 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Base resets */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--ntut-font-admin);
+  background-color: var(--ntut-light);
+  color: var(--ntut-text-dark);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Layout Elements */
+.ntut-app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.ntut-main-content {
+  flex: 1 0 auto;
+  padding: 2rem 1rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Typography styles */
+.ntut-h1 { font-size: 2.25rem; font-weight: 700; margin-bottom: 1rem; }
+.ntut-h2 { font-size: 1.75rem; font-weight: 600; margin-bottom: 0.8rem; }
+.ntut-h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+.ntut-p  { font-size: 1rem; color: var(--ntut-text-muted); line-height: 1.5; }
+
+/* Flat UI Components */
+
+/* Buttons */
+.ntut-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--ntut-font-admin);
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--ntut-radius-sm);
+  border: 2px solid var(--ntut-dark);
+  cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  box-shadow: var(--ntut-shadow-flat-sm);
+  text-align: center;
+}
+
+.ntut-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.ntut-btn-primary {
+  background-color: var(--ntut-primary);
+  color: var(--ntut-white);
+}
+.ntut-btn-primary:hover {
+  background-color: var(--ntut-primary-hover);
+}
+
+.ntut-btn-secondary {
+  background-color: var(--ntut-secondary);
+  color: var(--ntut-white);
+}
+.ntut-btn-secondary:hover {
+  background-color: var(--ntut-secondary-hover);
+}
+
+.ntut-btn-success {
+  background-color: var(--ntut-success);
+  color: var(--ntut-white);
+  box-shadow: 2px 2px 0px #1f2937;
+}
+
+.ntut-btn-danger {
+  background-color: var(--ntut-danger);
+  color: var(--ntut-white);
+}
+
+.ntut-btn-outline {
+  background-color: var(--ntut-white);
+  color: var(--ntut-dark);
+}
+.ntut-btn-outline:hover {
+  background-color: var(--ntut-light);
+}
+
+/* Cards */
+.ntut-card {
+  background-color: var(--ntut-white);
+  border: 2px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-sm);
+  padding: 1.5rem;
+  box-shadow: var(--ntut-shadow-flat);
+  margin-bottom: 1.5rem;
+}
+
+.ntut-card-header {
+  border-bottom: 2px solid var(--ntut-border);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Navigation */
+.ntut-navbar {
+  background-color: var(--ntut-white);
+  border-bottom: 2px solid var(--ntut-dark);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.ntut-nav-logo {
+  font-family: var(--ntut-font-kid);
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--ntut-dark);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ntut-logo-icon {
+  background-color: var(--ntut-warning);
+  color: var(--ntut-dark);
+  padding: 0.25rem 0.5rem;
+  border: 2px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-sm);
+  font-weight: 900;
+  box-shadow: var(--ntut-shadow-flat-sm);
+}
+
+.ntut-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.ntut-nav-link {
+  font-weight: 500;
+  padding: 0.5rem;
+  color: var(--ntut-text-dark);
+}
+.ntut-nav-link:hover {
+  color: var(--ntut-primary);
+}
+
+/* Tables */
+.ntut-table-wrapper {
+  overflow-x: auto;
+  border: 2px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-sm);
+  background: var(--ntut-white);
+  box-shadow: var(--ntut-shadow-flat-sm);
+  margin-bottom: 1.5rem;
+}
+
+.ntut-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.ntut-table th, .ntut-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--ntut-border);
+}
+
+.ntut-table th {
+  background-color: var(--ntut-light);
+  color: var(--ntut-dark);
+  font-weight: 700;
+  border-bottom: 2px solid var(--ntut-dark);
+}
+
+.ntut-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Forms */
+.ntut-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.ntut-form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--ntut-dark);
+}
+
+.ntut-form-input, .ntut-form-select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--ntut-radius-sm);
+  border: 2px solid var(--ntut-dark);
+  font-family: var(--ntut-font-admin);
+  font-size: 1rem;
+  outline: none;
+}
+
+.ntut-form-input:focus, .ntut-form-select:focus {
+  border-color: var(--ntut-primary);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+/* Alerts */
+.ntut-alert {
+  padding: 1rem;
+  border: 2px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-sm);
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ntut-alert-success {
+  background-color: var(--ntut-success);
+  color: var(--ntut-white);
+}
+
+.ntut-alert-danger {
+  background-color: var(--ntut-danger);
+  color: var(--ntut-white);
+}
+
+.ntut-alert-warning {
+  background-color: var(--ntut-warning);
+  color: var(--ntut-dark);
+}
+
+/* Grid helper */
+.ntut-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+.ntut-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Badge */
+.ntut-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-sm);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.ntut-badge-math { background-color: var(--ntut-kid-orange); color: var(--ntut-dark); }
+.ntut-badge-english { background-color: var(--ntut-kid-blue); color: var(--ntut-dark); }
+.ntut-badge-success { background-color: var(--ntut-success); color: var(--ntut-white); }
+.ntut-badge-warning { background-color: var(--ntut-warning); color: var(--ntut-dark); }
+
+/* ========================================== */
+/*   LEARNER-SPECIFIC OVERLAYS & VIEWS       */
+/* ========================================== */
+.ntut-learner-body {
+  font-family: var(--ntut-font-kid);
+  background-color: #fafafa;
+  color: var(--ntut-dark);
+  font-size: 1.25rem;
+}
+
+/* Large Child-Friendly Profile Picker */
+.ntut-learner-select-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 2rem;
+  font-family: var(--ntut-font-kid);
+}
+
+.ntut-learner-title {
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 2rem;
+  color: var(--ntut-dark);
+  text-align: center;
+  text-shadow: 2px 2px 0 var(--ntut-white);
+}
+
+.ntut-learner-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.ntut-profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--ntut-white);
+  border: 4px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-lg);
+  padding: 2rem;
+  width: 220px;
+  cursor: pointer;
+  box-shadow: var(--ntut-shadow-flat-lg);
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ntut-profile-card:hover {
+  transform: translateY(-8px) scale(1.05);
+}
+
+.ntut-profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 4px solid var(--ntut-dark);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 4rem;
+}
+
+.ntut-avatar-bunny  { background-color: var(--ntut-kid-pink); }
+.ntut-avatar-bear   { background-color: var(--ntut-kid-orange); }
+.ntut-avatar-cat    { background-color: var(--ntut-kid-blue); }
+.ntut-avatar-fox    { background-color: var(--ntut-kid-yellow); }
+.ntut-avatar-lion   { background-color: var(--ntut-kid-teal); }
+.ntut-avatar-panda  { background-color: var(--ntut-kid-purple); }
+
+.ntut-profile-name {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--ntut-dark);
+}
+
+/* --- Mascot Welcome Header --- */
+.ntut-kid-welcome-header {
+  margin-bottom: 2rem;
+  background-color: #ffffff;
+  border: 4px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-lg);
+  padding: 2rem;
+  box-shadow: var(--ntut-shadow-flat-lg);
+}
+
+.ntut-kid-welcome-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .ntut-kid-welcome-flex {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+}
+
+.ntut-kid-welcome-text-box {
+  flex: 1;
+}
+
+.ntut-kid-welcome-title {
+  font-size: 3rem;
+  font-weight: 900;
+  color: var(--ntut-dark);
+  margin-bottom: 1rem;
+  letter-spacing: -0.5px;
+}
+
+.ntut-kid-challenge-banner {
+  background-color: #fef08a; /* Warm Yellow */
+  border: 3px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-md);
+  padding: 1.25rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ntut-dark);
+  box-shadow: var(--ntut-shadow-flat-sm);
+  line-height: 1.4;
+}
+
+.ntut-kid-challenge-banner strong {
+  font-weight: 900;
+}
+
+.ntut-kid-welcome-mascot-box {
+  width: 130px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ntut-kid-welcome-mascot {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* --- Streak Container & Circles --- */
+.ntut-kid-streak-container {
+  margin-bottom: 2rem;
+}
+
+.ntut-kid-streak-row {
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.ntut-kid-streak-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ntut-streak-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 4px solid #e5e7eb;
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  color: #d1d5db;
+}
+
+.ntut-streak-label {
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--ntut-text-muted);
+}
+
+.ntut-kid-streak-day.ntut-active .ntut-streak-circle {
+  border-color: #ec4899; /* Pink/Purple outline */
+  background-color: #fce7f3;
+  color: #ec4899;
+}
+
+.ntut-kid-streak-day.ntut-active .ntut-streak-label {
+  color: #ec4899;
+}
+
+/* --- Continue Lesson Card --- */
+.ntut-kid-current-lesson-section {
+  margin-bottom: 3rem;
+}
+
+.ntut-kid-section-title {
+  font-size: 2.25rem;
+  font-weight: 900;
+  margin-bottom: 1.5rem;
+}
+
+.ntut-kid-current-card {
+  background-color: #ffffff;
+  border: 4px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-lg);
+  padding: 2rem;
+  box-shadow: var(--ntut-shadow-flat-lg);
+}
+
+.ntut-kid-progress-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.ntut-kid-card-progress-bar {
+  flex: 1;
+  height: 18px;
+  background-color: #e5e7eb;
+  border: 3px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-sm);
+  overflow: hidden;
+}
+
+.ntut-kid-card-progress-fill {
+  background-color: #22c55e; /* Thick green fill */
+  height: 100%;
+}
+
+.ntut-kid-progress-pct {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--ntut-dark);
+}
+
+.ntut-kid-card-image-box {
+  background-color: #e0f2fe; /* Light blue */
+  border: 3px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-md);
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.ntut-kid-card-emoji {
+  font-size: 7rem;
+}
+
+.ntut-kid-card-info {
+  margin-bottom: 1.5rem;
+}
+
+.ntut-kid-card-level-label {
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: #f97316; /* Level label orange */
+  text-transform: uppercase;
+}
+
+.ntut-kid-card-lesson-title {
+  font-size: 2rem;
+  font-weight: 900;
+  margin-top: 0.25rem;
+}
+
+.ntut-kid-continue-btn {
+  display: block;
+  width: 100%;
+  background-color: #111827; /* Solid black button */
+  color: #ffffff;
+  font-size: 1.75rem;
+  font-weight: 900;
+  text-align: center;
+  padding: 1.25rem;
+  border-radius: var(--ntut-radius-md);
+  border: 4px solid #111827;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #000000;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.ntut-kid-continue-btn:hover {
+  background-color: #1f2937;
+}
+
+.ntut-kid-continue-btn:active {
+  transform: translateY(3px);
+  box-shadow: none;
+}
+
+/* --- Lesson Paths Columns (Vertical path) --- */
+.ntut-kid-lesson-paths-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .ntut-kid-lesson-paths-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ntut-kid-path-track {
+  background-color: #ffffff;
+  border: 4px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-lg);
+  box-shadow: var(--ntut-shadow-flat-lg);
+  overflow: hidden;
+}
+
+.ntut-kid-track-header {
+  background-color: #581c87; /* Deep Purple Header */
+  color: #ffffff;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border-bottom: 4px solid var(--ntut-dark);
+}
+
+.ntut-kid-track-icon-badge {
+  font-size: 2rem;
+}
+
+.ntut-kid-track-title {
+  font-size: 1.75rem;
+  font-weight: 900;
+  margin: 0;
+  color: #ffffff;
+}
+
+.ntut-kid-track-body {
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+/* Node layout */
+.ntut-path-node-item {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 320px;
+  position: relative;
+}
+
+.ntut-path-connector-line {
+  position: absolute;
+  top: 70px;
+  left: 36px;
+  width: 8px;
+  height: 48px;
+  background-color: #cbd5e1; /* Dot/connector line bg */
+  border-left: 2px solid var(--ntut-dark);
+  border-right: 2px solid var(--ntut-dark);
+  z-index: 1;
+}
+
+.ntut-path-node-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 5px solid var(--ntut-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.25rem;
+  background-color: #ffffff;
+  z-index: 2;
+  box-shadow: var(--ntut-shadow-flat-sm);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.ntut-path-node-circle:hover {
+  transform: scale(1.1);
+}
+
+/* Circle Node States */
+.ntut-path-node-circle.ntut-completed {
+  border-color: #22c55e;
+  background-color: #f0fdf4;
+}
+
+.ntut-path-node-circle.ntut-in-progress {
+  border-color: #a855f7; /* Vibrant Violet outline */
+  background-color: #faf5ff;
+  animation: ntutPulse 2s infinite ease-in-out;
+}
+
+.ntut-locked-node {
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
+  color: #94a3b8;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.ntut-locked-node:hover {
+  transform: none;
+}
+
+.ntut-path-node-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ntut-path-level-label {
+  font-size: 0.9rem;
+  font-weight: 900;
+  color: #fb923c; /* Orange */
+  text-transform: uppercase;
+}
+
+.ntut-path-level-label.text-muted {
+  color: #94a3b8;
+}
+
+.ntut-path-level-title {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--ntut-dark);
+}
+
+.ntut-path-level-title.text-muted {
+  color: #94a3b8;
+}
+
+/* --- Mascot Speech Bubble at bottom --- */
+.ntut-kid-speech-bubble-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 3rem;
+  margin-bottom: 5rem;
+}
+
+.ntut-kid-speech-mascot {
+  width: 90px;
+  height: auto;
+}
+
+.ntut-kid-speech-bubble {
+  position: relative;
+  background-color: #ffffff;
+  border: 3px solid #cbd5e1;
+  border-radius: var(--ntut-radius-md);
+  padding: 1.5rem;
+  font-size: 1.25rem;
+  color: var(--ntut-dark);
+  flex: 1;
+}
+
+/* Speech bubble arrow */
+.ntut-kid-speech-bubble::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 20px;
+  height: 20px;
+  background-color: #ffffff;
+  border-left: 3px solid #cbd5e1;
+  border-bottom: 3px solid #cbd5e1;
+}
+
+/* --- Bottom Fixed Tab Bar --- */
+.ntut-kid-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background-color: #ffffff;
+  border-top: 4px solid var(--ntut-dark);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 999;
+}
+
+.ntut-bottom-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--ntut-text-muted);
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.ntut-bottom-tab:hover {
+  color: var(--ntut-dark);
+}
+
+.ntut-tab-icon {
+  font-size: 1.75rem;
+}
+
+.ntut-tab-label {
+  font-size: 0.9rem;
+  font-weight: 900;
+}
+
+.ntut-bottom-tab.ntut-active {
+  color: #581c87; /* Active theme deep purple */
+}
+
+/* Adjust Dashboard margins for bottom bar */
+.ntut-kid-dashboard {
+  padding-bottom: 100px;
+}
+
+/* Header customization for child view */
+.ntut-kid-header {
+  background-color: #581c87; /* Deep Purple Header */
+  border-bottom: 4px solid var(--ntut-dark);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ntut-kid-header .ntut-nav-logo {
+  color: #ffffff;
+}
+
+.ntut-kid-back-link {
+  font-weight: 900;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fb923c;
+  border: 3px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-md);
+  padding: 0.5rem 1rem;
+  box-shadow: var(--ntut-shadow-flat-sm);
+  cursor: pointer;
+  color: var(--ntut-dark);
+}
+
+.ntut-kid-back-link:active {
+  transform: translate(2px, 2px);
+  box-shadow: none;
+}
+
+.ntut-kid-profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: #ffffff;
+  border: 3px solid var(--ntut-dark);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--ntut-radius-md);
+  box-shadow: var(--ntut-shadow-flat-sm);
+}
+
+.ntut-kid-badge-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid var(--ntut-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+.ntut-kid-badge-name {
+  font-weight: 900;
+  font-size: 1.15rem;
+}
+
+/* ========================================== */
+/*   LESSON VIEWER & RESPONSIVE CANVAS SCREEN */
+/* ========================================== */
+
+/* Use a container query container for proportional element scaling */
+.ntut-canvas-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  container-type: inline-size;
+}
+
+.ntut-canvas {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background-color: var(--ntut-white);
+  border: 4px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-lg);
+  box-shadow: var(--ntut-shadow-flat-lg);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+/* Children Control Buttons Bar */
+.ntut-lesson-controls {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.ntut-control-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  border: 4px solid var(--ntut-dark);
+  cursor: pointer;
+  box-shadow: var(--ntut-shadow-flat);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  user-select: none;
+  font-size: 2.25rem;
+  padding: 0;
+  line-height: 1;
+}
+
+.ntut-control-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 6px 6px 0px var(--ntut-dark);
+}
+
+.ntut-control-btn:active {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+/* Playful, high-contrast flat colors for control buttons */
+#prev-btn {
+  background-color: var(--ntut-kid-yellow);
+}
+#next-btn {
+  background-color: var(--ntut-kid-blue);
+}
+#play-btn, #pause-btn {
+  background-color: var(--ntut-kid-green);
+  color: var(--ntut-white);
+}
+#replay-btn {
+  background-color: var(--ntut-kid-purple);
+}
+
+/* Extra Bold Forward/Backward Navigation buttons */
+#prev-btn, #next-btn {
+  width: 90px;
+  height: 90px;
+  font-size: 2.75rem;
+  border: 5px solid var(--ntut-dark);
+}
+
+/* Absolute Position elements within the interactive canvas */
+.ntut-animated-item {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  transition: all 0.3s ease;
+}
+
+/* Keyframe animations */
+@keyframes ntutBounce {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-15px); }
+}
+@keyframes ntutWiggle {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+@keyframes ntutPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+@keyframes ntutFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.ntut-anim-bounce {
+  animation: ntutBounce 0.5s infinite alternate ease-in-out;
+}
+.ntut-anim-wiggle {
+  animation: ntutWiggle 0.6s infinite ease-in-out;
+}
+.ntut-anim-pulse {
+  animation: ntutPulse 1.5s infinite ease-in-out;
+}
+.ntut-anim-float {
+  animation: ntutFloat 3s infinite ease-in-out;
+}
+
+/* Container query units (cqw) for proportional elements scaling */
+.ntut-giant-letter {
+  font-family: var(--ntut-font-kid);
+  font-size: 24cqw;
+  font-weight: 900;
+  color: var(--ntut-primary);
+  text-shadow: 4px 4px 0 var(--ntut-dark);
+}
+
+/* Responsive Classes to clean up inline styles */
+.ntut-safari-emoji {
+  font-size: 16cqw;
+  line-height: 1;
+}
+
+.ntut-safari-word {
+  font-size: 6.5cqw;
+  font-weight: 900;
+  margin-top: 1rem;
+  color: var(--ntut-dark);
+}
+
+.ntut-phonics-letter {
+  font-size: 20cqw;
+  font-weight: 900;
+  color: var(--ntut-secondary);
+  text-shadow: 4px 4px 0 var(--ntut-dark);
+}
+
+.ntut-phonics-phrase {
+  font-size: 7cqw;
+  font-weight: 900;
+  color: var(--ntut-primary);
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.ntut-word-container {
+  display: flex;
+  justify-content: center;
+  gap: 3cqw;
+  width: 100%;
+}
+
+.ntut-word-charbox {
+  font-size: 11cqw;
+  font-weight: 900;
+  padding: 1.5cqw 3cqw;
+  border: 4px solid var(--ntut-dark);
+  background-color: var(--ntut-kid-yellow);
+  border-radius: var(--ntut-radius-md);
+  box-shadow: var(--ntut-shadow-flat);
+}
+
+.ntut-word-display {
+  font-size: 11cqw;
+  font-weight: 900;
+  color: var(--ntut-dark);
+}
+
+.ntut-magic-num {
+  font-size: 25cqw;
+  font-weight: 900;
+  color: var(--ntut-kid-orange);
+  text-shadow: 6px 6px 0px var(--ntut-dark);
+}
+
+.ntut-magic-emoji-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2cqw;
+  justify-content: center;
+  width: 40cqw;
+}
+
+.ntut-magic-emoji {
+  font-size: 9cqw;
+}
+
+.ntut-counting-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3cqw;
+  width: 90%;
+  height: 70%;
+}
+
+.ntut-counting-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 4px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-md);
+  padding: 2cqw;
+  background-color: var(--ntut-kid-blue);
+  box-shadow: var(--ntut-shadow-flat);
+}
+
+.ntut-counting-emoji {
+  font-size: 10cqw;
+}
+
+.ntut-counting-badge {
+  font-size: 4cqw;
+  color: var(--ntut-white);
+  background: var(--ntut-dark);
+  padding: 0.2cqw 1.2cqw;
+  border-radius: 50%;
+  font-weight: 900;
+  margin-top: 0.5rem;
+}
+
+.ntut-addition-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3cqw;
+  width: 95%;
+}
+
+.ntut-addition-group {
+  border: 3px dashed var(--ntut-dark);
+  padding: 2cqw;
+  border-radius: var(--ntut-radius-md);
+  display: flex;
+  gap: 1cqw;
+}
+
+.ntut-addition-emoji {
+  font-size: 7cqw;
+}
+
+.ntut-addition-symbol {
+  font-size: 8cqw;
+  font-weight: 900;
+  color: var(--ntut-dark);
+}
+
+.ntut-addition-result {
+  border: 4px solid var(--ntut-dark);
+  padding: 3cqw;
+  border-radius: var(--ntut-radius-md);
+  background-color: var(--ntut-kid-orange);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: var(--ntut-shadow-flat);
+}
+
+.ntut-addition-result-emoji {
+  font-size: 7cqw;
+}
+
+.ntut-addition-result-number {
+  font-size: 5cqw;
+  font-weight: 900;
+  color: var(--ntut-white);
+}
+
+/* Autoplay start overlay button and rocket emoji */
+.ntut-start-rocket {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  animation: ntutBounce 1.5s infinite alternate ease-in-out;
+}
+
+.ntut-start-btn {
+  font-family: var(--ntut-font-kid);
+  font-size: 2.25rem;
+  font-weight: 900;
+  color: var(--ntut-white);
+  border: 4px solid var(--ntut-dark);
+  background-color: var(--ntut-dark);
+  padding: 0.75rem 2rem;
+  border-radius: var(--ntut-radius-lg);
+  box-shadow: var(--ntut-shadow-flat-lg);
+  transition: transform 0.1s ease;
+}
+
+/* Mobile responsive adjustments for page layouts and headers */
+@media (max-width: 576px) {
+  .ntut-control-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 1.75rem;
+  }
+  #prev-btn, #next-btn {
+    width: 75px;
+    height: 75px;
+    font-size: 2.25rem;
+  }
+  .ntut-lesson-controls {
+    gap: 0.75rem;
+  }
+  .ntut-kid-header {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: space-between;
+  }
+  .ntut-kid-header .ntut-nav-logo {
+    order: -1;
+    font-size: 1.35rem;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 0.25rem;
+  }
+  .ntut-kid-back-link {
+    font-size: 1rem;
+    padding: 0.35rem 0.75rem;
+  }
+  .ntut-kid-profile-badge {
+    padding: 0.3rem 0.6rem;
+  }
+  .ntut-kid-badge-name {
+    font-size: 0.95rem;
+  }
+  .ntut-start-rocket {
+    font-size: 3.5rem;
+  }
+  .ntut-start-btn {
+    font-size: 1.5rem;
+    padding: 0.5rem 1.5rem;
+  }
+}
+
+/* ========================================== */
+/*   QUIZ GAMEPLAY & ENCOURAGING OVERLAYS     */
+/* ========================================== */
+
+.ntut-quiz-container {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: var(--ntut-font-kid);
+}
+
+.ntut-quiz-question-box {
+  background-color: var(--ntut-white);
+  border: 4px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-lg);
+  padding: 2.5rem;
+  margin-top: 2rem;
+  width: 100%;
+  box-shadow: var(--ntut-shadow-flat-lg);
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ntut-quiz-instruction-banner {
+  background-color: var(--ntut-light);
+  border: 3px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-md);
+  padding: 1.25rem 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--ntut-dark);
+  margin-bottom: 2rem;
+  text-align: center;
+  box-shadow: var(--ntut-shadow-flat-sm);
+  line-height: 1.5;
+}
+
+.ntut-quiz-instruction-banner strong {
+  font-weight: 900;
+  color: var(--ntut-primary);
+}
+
+.ntut-quiz-text {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: var(--ntut-dark);
+  text-align: center;
+  margin-bottom: 2.5rem;
+  line-height: 1.3;
+}
+
+.ntut-quiz-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.ntut-quiz-option-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 180px;
+  padding: 1.25rem 2rem;
+  font-size: 1.85rem;
+  font-weight: 900;
+  font-family: var(--ntut-font-kid);
+  color: var(--ntut-dark);
+  border: 4px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-md);
+  cursor: pointer;
+  box-shadow: var(--ntut-shadow-flat);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+  text-align: center;
+  word-break: break-word;
+}
+
+.ntut-quiz-option-btn:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 6px 6px 0px var(--ntut-dark);
+}
+
+.ntut-quiz-option-btn:active:not(:disabled) {
+  transform: translate(4px, 4px);
+  box-shadow: none;
+}
+
+.ntut-quiz-option-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Correct and Incorrect selection rewards */
+.ntut-correct {
+  background-color: var(--ntut-success) !important;
+  color: var(--ntut-white) !important;
+  border-color: var(--ntut-dark) !important;
+}
+
+.ntut-incorrect {
+  background-color: var(--ntut-danger) !important;
+  color: var(--ntut-white) !important;
+  border-color: var(--ntut-dark) !important;
+}
+
+/* Animations */
+@keyframes ntutCorrectJump {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px) scale(1.05); }
+}
+
+@keyframes ntutShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-10px); }
+  40%, 80% { transform: translateX(10px); }
+}
+
+.ntut-anim-correct-jump {
+  animation: ntutCorrectJump 0.5s ease;
+}
+
+.ntut-anim-shake {
+  animation: ntutShake 0.4s ease;
+}
+
+/* Encouraging Modal Dialog Overlay */
+.ntut-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(31, 41, 55, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1000;
+  transition: opacity 0.25s ease;
+  padding: 1rem;
+}
+
+.ntut-modal-overlay.ntut-show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ntut-feedback-modal {
+  background-color: var(--ntut-white);
+  border: 4px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-lg);
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+  box-shadow: var(--ntut-shadow-flat-lg);
+  transform: scale(0.9);
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.ntut-modal-overlay.ntut-show .ntut-feedback-modal {
+  transform: scale(1);
+}
+
+.ntut-feedback-emoji {
+  font-size: 6rem;
+  margin-bottom: 1rem;
+  animation: ntutBounce 1.5s infinite alternate ease-in-out;
+}
+
+.ntut-feedback-title {
+  font-size: 2.75rem;
+  font-weight: 900;
+  margin-bottom: 0.5rem;
+  color: var(--ntut-dark);
+}
+
+.ntut-feedback-subtitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ntut-text-muted);
+  margin-bottom: 2rem;
+  line-height: 1.4;
+}
+
+.ntut-kid-progress-bar-container {
+  border: 3px solid var(--ntut-dark);
+  border-radius: var(--ntut-radius-sm);
+  background-color: #e5e7eb;
+  overflow: hidden;
+  height: 24px;
+}
+
+.ntut-kid-progress-bar-fill {
+  background-color: var(--ntut-success);
+  height: 100%;
+  transition: width 0.3s ease-in-out;
+}
+
+/* Playful kid giant buttons */
+.ntut-kid-btn-giant {
+  font-size: 1.75rem;
+  font-weight: 900;
+  padding: 1.25rem 2rem;
+  border-radius: var(--ntut-radius-md);
+  border: 4px solid var(--ntut-dark);
+  box-shadow: var(--ntut-shadow-flat);
+}
+
+/* Mobile responsive adjustments for quiz screens */
+@media (max-width: 576px) {
+  .ntut-quiz-question-box {
+    padding: 1.5rem;
+    min-height: 280px;
+  }
+  .ntut-quiz-text {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .ntut-quiz-instruction-banner {
+    font-size: 1rem;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .ntut-quiz-option-btn {
+    min-width: 130px;
+    padding: 0.85rem 1.25rem;
+    font-size: 1.35rem;
+    border-width: 3px;
+  }
+  .ntut-feedback-modal {
+    padding: 1.5rem;
+  }
+  .ntut-feedback-emoji {
+    font-size: 4rem;
+  }
+  .ntut-feedback-title {
+    font-size: 2rem;
+  }
+  .ntut-feedback-subtitle {
+    font-size: 1.15rem;
+    margin-bottom: 1.25rem;
+  }
+  .ntut-kid-btn-giant {
+    font-size: 1.35rem;
+    padding: 0.85rem 1.25rem;
+  }
+}
+
+/* ========================================== */
+/*   RESPONSIVE ADULT NAVIGATION BAR & TABS   */
+/* ========================================== */
+
+/* Swipe-scroll horizontal tab container for dashboards on mobile */
+.ntut-tab-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid var(--ntut-dark);
+  padding-bottom: 2px;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+.ntut-tab-container::-webkit-scrollbar {
+  display: none; /* Hide scrollbars */
+}
+
+.ntut-tab-btn {
+  flex: 0 0 auto;
+  border-bottom: none !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  margin-bottom: 0 !important;
+  box-shadow: none !important;
+}
+
+.active-tab-btn {
+  background-color: var(--ntut-white) !important;
+  color: var(--ntut-dark) !important;
+}
+
+/* Force cards and tables to contain horizontal overflow */
+.ntut-card {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.ntut-table-wrapper {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Mobile media query overrides for adult navigation */
+@media (max-width: 768px) {
+  .ntut-navbar {
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .ntut-nav-links {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    gap: 0.75rem;
+  }
+
+  .ntut-nav-link {
+    text-align: center;
+    padding: 0.5rem 0;
+    border-bottom: 1.5px dashed var(--ntut-border);
+    width: 100%;
+  }
+
+  #user-display {
+    border-bottom: 2px solid var(--ntut-dark);
+    padding-bottom: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .ntut-navbar .ntut-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.85rem 1.5rem;
+    font-size: 1.1rem;
+  }
+}

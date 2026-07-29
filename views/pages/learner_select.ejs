@@ -1,0 +1,82 @@
+<%- include('../partials/header', { title: 'Select Profile', bodyClass: 'ntut-learner-body' }) %>
+
+<main class="ntut-learner-select-container">
+  <h1 class="ntut-learner-title">Who is learning today?</h1>
+  
+  <% if (learners.length === 0) { %>
+    <div class="ntut-card" style="max-width: 500px; text-align: center; font-family: var(--ntut-font-admin);">
+      <h2 class="ntut-h2">No profiles found!</h2>
+      <p class="ntut-p" style="margin-bottom: 2rem;">Ask your parent or teacher to add a learner profile first.</p>
+      
+      <% if (user.role === 'teacher_admin') { %>
+        <a href="/teacher-dashboard" class="ntut-btn ntut-btn-primary">Go to Teacher Panel</a>
+      <% } else { %>
+        <a href="/parent-dashboard" class="ntut-btn ntut-btn-primary">Go to Parent Dashboard</a>
+      <% } %>
+    </div>
+  <% } else { %>
+    <div class="ntut-learner-grid">
+      <% learners.forEach(learner => { %>
+        <div class="ntut-profile-card" onclick="selectLearner(<%= learner.id %>)" id="profile-<%= learner.id %>">
+          <div class="ntut-profile-avatar ntut-avatar-<%= learner.avatar %>">
+            <%= learner.avatar === 'bunny' ? '🐰' : 
+                learner.avatar === 'bear' ? '🐻' : 
+                learner.avatar === 'cat' ? '🐱' : 
+                learner.avatar === 'fox' ? '🦊' : 
+                learner.avatar === 'lion' ? '🦁' : '🐼' %>
+          </div>
+          <span class="ntut-profile-name"><%= learner.name %></span>
+        </div>
+      <% }) %>
+    </div>
+    
+    <div style="text-align: center;">
+      <% if (user.role === 'teacher_admin') { %>
+        <a href="/teacher-dashboard" class="ntut-btn ntut-btn-outline" style="font-family: var(--ntut-font-admin); font-size: 1rem;" id="btn-back-dashboard">
+          ⚙️ Return to Teacher Panel
+        </a>
+      <% } else { %>
+        <a href="/parent-dashboard" class="ntut-btn ntut-btn-outline" style="font-family: var(--ntut-font-admin); font-size: 1rem;" id="btn-back-dashboard">
+          ⚙️ Return to Parent Dashboard
+        </a>
+      <% } %>
+    </div>
+  <% } %>
+</main>
+
+<!-- Load Audio context wrapper on first profile interaction -->
+<script src="/js/audio.js"></script>
+<script>
+  async function selectLearner(learnerId) {
+    // Initialize Web Audio synthesizer on user click
+    NtutAudio.initAudio();
+    
+    // Play happy chime immediately
+    NtutAudio.playCue('success');
+
+    try {
+      const response = await fetch('/api/learners/select', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ learnerId })
+      });
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        // Greet child dynamically via Speech Synthesis
+        NtutAudio.speak("Hello " + data.learner.name + "! Welcome to TutorToon. Let us learn together!");
+        
+        setTimeout(() => {
+          window.location.href = '/learner-dashboard';
+        }, 1200);
+      } else {
+        alert('Could not choose profile');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error connecting to the server');
+    }
+  }
+</script>
+
+<%- include('../partials/footer') %>

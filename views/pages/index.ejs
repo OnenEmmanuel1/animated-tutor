@@ -1,0 +1,25 @@
+<%- include('../partials/header') %>
+<%- include('../partials/nav') %>
+
+<main class="ntut-main-content" style="display: flex; align-items: center; justify-content: center; min-height: 70vh;">
+  <div class="ntut-card" style="max-width: 750px; text-align: center; padding: 3rem 2rem;">
+    <div style="font-size: 6rem; margin-bottom: 1.5rem; animation: ntutBounce 2s infinite alternate ease-in-out;">🎒</div>
+    <h1 class="ntut-h1" style="font-size: 3rem; font-family: var(--ntut-font-kid); font-weight: 900; color: var(--ntut-dark);">
+      Welcome to TutorToon!
+    </h1>
+    <p class="ntut-p" style="font-size: 1.25rem; max-width: 600px; margin: 0 auto 2rem; color: var(--ntut-text-muted);">
+      An interactive, animated tutor designed specifically for early childhood learners (ages 3-6) to learn English and Mathematics through fun lessons and playful quizzes.
+    </p>
+    
+    <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+      <a href="/login" class="ntut-btn ntut-btn-primary" style="font-size: 1.1rem; padding: 0.9rem 2rem;" id="landing-login-btn">
+        🔐 Log In Portal
+      </a>
+      <a href="/register" class="ntut-btn ntut-btn-secondary" style="font-size: 1.1rem; padding: 0.9rem 2rem;" id="landing-register-btn">
+        ✨ Parent/Teacher Sign Up
+      </a>
+    </div>
+  </div>
+</main>
+
+<%- include('../partials/footer') %>

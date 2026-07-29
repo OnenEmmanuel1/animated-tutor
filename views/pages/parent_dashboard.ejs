@@ -1,0 +1,293 @@
+<%- include('../partials/header', { title: 'Parent Dashboard' }) %>
+<%- include('../partials/nav') %>
+
+<main class="ntut-main-content">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; margin-bottom: 2rem;">
+    <div>
+      <h1 class="ntut-h1" style="margin-bottom: 0.25rem;">Parent Dashboard</h1>
+      <p class="ntut-p">Manage children profiles and track learning progress.</p>
+    </div>
+    <button class="ntut-btn ntut-btn-primary" onclick="toggleAddChildModal(true)" id="btn-add-child-modal">
+      ➕ Add Child Profile
+    </button>
+  </div>
+
+  <% if (children.length === 0) { %>
+    <!-- Empty State -->
+    <div class="ntut-card" style="text-align: center; padding: 4rem 2rem;">
+      <div style="font-size: 5rem; margin-bottom: 1.5rem;">🐰</div>
+      <h2 class="ntut-h2">No Child Profiles Created</h2>
+      <p class="ntut-p" style="margin-bottom: 2rem;">Create a child profile to allow them to access the English and Mathematics learning tracks.</p>
+      <button class="ntut-btn ntut-btn-primary" onclick="toggleAddChildModal(true)">Create First Profile</button>
+    </div>
+  <% } else { %>
+    <div class="ntut-grid-2">
+      <!-- Left column: Child List & Progress -->
+      <div>
+        <h2 class="ntut-h2" style="margin-bottom: 1rem;">Children Profiles</h2>
+        <% children.forEach(child => { %>
+          <div class="ntut-card">
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--ntut-border); padding-bottom: 1rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="ntut-profile-avatar ntut-avatar-<%= child.profile.avatar %>" style="width: 60px; height: 60px; font-size: 2rem; margin-bottom: 0; border: 2px solid var(--ntut-dark);">
+                  <%= child.profile.avatar === 'bunny' ? '🐰' : 
+                      child.profile.avatar === 'bear' ? '🐻' : 
+                      child.profile.avatar === 'cat' ? '🐱' : 
+                      child.profile.avatar === 'fox' ? '🦊' : 
+                      child.profile.avatar === 'lion' ? '🦁' : '🐼' %>
+                </div>
+                <div>
+                  <h3 class="ntut-h3" style="margin-bottom: 0;"><%= child.profile.name %></h3>
+                  <span class="ntut-p" style="font-size: 0.85rem;">Registered: <%= new Date(child.profile.created_at).toLocaleDateString() %></span>
+                </div>
+              </div>
+              <button onclick="selectProfile(<%= child.profile.id %>)" class="ntut-btn ntut-btn-success" id="btn-select-<%= child.profile.id %>">
+                🎮 Start Learning
+              </button>
+            </div>
+
+            <!-- Learning Progress breakdown -->
+            <div style="margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                <span class="ntut-form-label" style="margin-bottom: 0;">Overall Lessons Completed</span>
+                <strong><%= child.progress.overall.completed %> / <%= child.progress.overall.total %> (<%= child.progress.overall.percentage %>%)</strong>
+              </div>
+              <div class="ntut-kid-progress-bar-container" style="max-width: 100%; border-width: 2px; height: 18px; margin-top: 0;">
+                <div class="ntut-kid-progress-bar-fill" style="width: <%= child.progress.overall.percentage %>%"></div>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+              <div style="background-color: var(--ntut-light); padding: 0.75rem; border-radius: var(--ntut-radius-sm); border: 1px solid var(--ntut-border);">
+                <div style="font-size: 0.85rem; color: var(--ntut-text-muted);">English Track</div>
+                <strong style="font-size: 1.15rem;"><%= child.progress.subjects.english.percentage %>%</strong>
+              </div>
+              <div style="background-color: var(--ntut-light); padding: 0.75rem; border-radius: var(--ntut-radius-sm); border: 1px solid var(--ntut-border);">
+                <div style="font-size: 0.85rem; color: var(--ntut-text-muted);">Math Track</div>
+                <strong style="font-size: 1.15rem;"><%= child.progress.subjects.math.percentage %>%</strong>
+              </div>
+            </div>
+            
+            <div style="margin-top: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span class="ntut-badge ntut-badge-warning" style="font-size: 0.75rem;">Quiz Score Avg</span>
+              <strong><%= child.progress.overall.avgQuizScore %>%</strong>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+
+      <!-- Right column: Quiz Performance History -->
+      <div>
+        <h2 class="ntut-h2" style="margin-bottom: 1rem;">Recent Quiz Performance</h2>
+        <% children.forEach(child => { %>
+          <div class="ntut-card">
+            <h3 class="ntut-h3" style="border-bottom: 1px solid var(--ntut-border); padding-bottom: 0.5rem; margin-bottom: 1rem;">
+              <%= child.profile.name %>'s Quiz History
+            </h3>
+            <% if (child.progress.history.length === 0) { %>
+              <p class="ntut-p" style="font-style: italic;">No quiz attempts logged yet.</p>
+            <% } else { %>
+              <div class="ntut-table-wrapper" style="margin-bottom: 0;">
+                <table class="ntut-table">
+                  <thead>
+                    <tr>
+                      <th>Lesson / Topic</th>
+                      <th>Score</th>
+                      <th>Attempted</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% child.progress.history.forEach(attempt => { %>
+                      <% // Find lesson title
+                         const matchedLesson = child.progress.lessons.find(l => l.id === attempt.lesson_unit_id);
+                         const lessonTitle = matchedLesson ? matchedLesson.title : 'Topic #' + attempt.lesson_unit_id;
+                         const lessonSubject = matchedLesson ? matchedLesson.subject : 'math';
+                      %>
+                      <tr>
+                        <td>
+                          <span class="ntut-badge <%= lessonSubject === 'english' ? 'ntut-badge-english' : 'ntut-badge-math' %>" style="margin-right: 0.5rem;">
+                            <%= lessonSubject %>
+                          </span>
+                          <%= lessonTitle %>
+                        </td>
+                        <td>
+                          <strong><%= attempt.score %> / <%= attempt.total_questions %></strong> 
+                          (<%= Math.round((attempt.score/attempt.total_questions)*100) %>%)
+                        </td>
+                        <td style="font-size: 0.85rem; color: var(--ntut-text-muted);">
+                          <%= new Date(attempt.attempted_at).toLocaleDateString() %>
+                        </td>
+                      </tr>
+                    <% }) %>
+                  </tbody>
+                </table>
+              </div>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Modal for Creating Child Profile (Simple Overlay) -->
+  <div id="add-child-modal" class="ntut-modal-overlay">
+    <div class="ntut-feedback-modal" style="max-width: 450px; text-align: left; padding: 2rem; transform: scale(1);">
+      <h2 class="ntut-h2" style="font-family: var(--ntut-font-kid); font-weight: 900; margin-bottom: 1.5rem; border-bottom: 2px solid var(--ntut-border); padding-bottom: 0.5rem;">
+        Add Child Profile
+      </h2>
+      <div id="modal-alert-box" style="display: none;"></div>
+      
+      <form id="add-child-form">
+        <div class="ntut-form-group">
+          <label for="child-name" class="ntut-form-label">Child's Name</label>
+          <input type="text" id="child-name" name="name" class="ntut-form-input" placeholder="Tommy" required>
+        </div>
+
+        <div class="ntut-form-group">
+          <label class="ntut-form-label">Choose Avatar</label>
+          <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.5rem; margin-top: 0.5rem;">
+            <label style="cursor: pointer; text-align: center;">
+              <input type="radio" name="avatar" value="bunny" checked style="display: none;">
+              <div class="ntut-profile-avatar ntut-avatar-bunny" style="width: 50px; height: 50px; font-size: 1.5rem; border: 2px solid var(--ntut-dark); margin: 0 auto 0.25rem;">🐰</div>
+              <span style="font-size: 0.75rem; font-weight: bold;">Bunny</span>
+            </label>
+            <label style="cursor: pointer; text-align: center;">
+              <input type="radio" name="avatar" value="bear" style="display: none;">
+              <div class="ntut-profile-avatar ntut-avatar-bear" style="width: 50px; height: 50px; font-size: 1.5rem; border: 2px solid var(--ntut-dark); margin: 0 auto 0.25rem;">🐻</div>
+              <span style="font-size: 0.75rem; font-weight: bold;">Bear</span>
+            </label>
+            <label style="cursor: pointer; text-align: center;">
+              <input type="radio" name="avatar" value="cat" style="display: none;">
+              <div class="ntut-profile-avatar ntut-avatar-cat" style="width: 50px; height: 50px; font-size: 1.5rem; border: 2px solid var(--ntut-dark); margin: 0 auto 0.25rem;">🐱</div>
+              <span style="font-size: 0.75rem; font-weight: bold;">Cat</span>
+            </label>
+            <label style="cursor: pointer; text-align: center;">
+              <input type="radio" name="avatar" value="fox" style="display: none;">
+              <div class="ntut-profile-avatar ntut-avatar-fox" style="width: 50px; height: 50px; font-size: 1.5rem; border: 2px solid var(--ntut-dark); margin: 0 auto 0.25rem;">🦊</div>
+              <span style="font-size: 0.75rem; font-weight: bold;">Fox</span>
+            </label>
+            <label style="cursor: pointer; text-align: center;">
+              <input type="radio" name="avatar" value="lion" style="display: none;">
+              <div class="ntut-profile-avatar ntut-avatar-lion" style="width: 50px; height: 50px; font-size: 1.5rem; border: 2px solid var(--ntut-dark); margin: 0 auto 0.25rem;">🦁</div>
+              <span style="font-size: 0.75rem; font-weight: bold;">Lion</span>
+            </label>
+            <label style="cursor: pointer; text-align: center;">
+              <input type="radio" name="avatar" value="panda" style="display: none;">
+              <div class="ntut-profile-avatar ntut-avatar-panda" style="width: 50px; height: 50px; font-size: 1.5rem; border: 2px solid var(--ntut-dark); margin: 0 auto 0.25rem;">🐼</div>
+              <span style="font-size: 0.75rem; font-weight: bold;">Panda</span>
+            </label>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 1rem; margin-top: 2rem; justify-content: flex-end;">
+          <button type="button" class="ntut-btn ntut-btn-outline" onclick="toggleAddChildModal(false)" id="btn-child-modal-cancel">Cancel</button>
+          <button type="submit" class="ntut-btn ntut-btn-primary" id="btn-child-modal-submit">Create Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<script>
+  function toggleAddChildModal(show) {
+    const modal = document.getElementById('add-child-modal');
+    if (show) {
+      modal.classList.add('ntut-show');
+      document.getElementById('child-name').focus();
+    } else {
+      modal.classList.remove('ntut-show');
+      document.getElementById('add-child-form').reset();
+      document.getElementById('modal-alert-box').style.display = 'none';
+      resetAvatarBorders();
+    }
+  }
+
+  // Handle avatar radio selection visual borders
+  const avatarRadios = document.querySelectorAll('input[name="avatar"]');
+  avatarRadios.forEach(radio => {
+    radio.addEventListener('change', () => {
+      resetAvatarBorders();
+      if (radio.checked) {
+        radio.nextElementSibling.style.borderColor = 'var(--ntut-primary)';
+        radio.nextElementSibling.style.transform = 'scale(1.1)';
+      }
+    });
+  });
+
+  function resetAvatarBorders() {
+    document.querySelectorAll('.ntut-profile-avatar').forEach(el => {
+      el.style.borderColor = 'var(--ntut-dark)';
+      el.style.transform = 'none';
+    });
+  }
+
+  // Initial trigger
+  document.querySelector('input[name="avatar"]:checked').dispatchEvent(new Event('change'));
+
+  // Submit Child profile API
+  document.getElementById('add-child-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('child-name').value;
+    const avatar = document.querySelector('input[name="avatar"]:checked').value;
+    const alertBox = document.getElementById('modal-alert-box');
+    const submitBtn = document.getElementById('btn-child-modal-submit');
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Creating...';
+
+    try {
+      const response = await fetch('/api/learners', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, avatar })
+      });
+      const data = await response.json();
+
+      if (!response.ok || data.error) {
+        alertBox.className = 'ntut-alert ntut-alert-danger';
+        alertBox.innerText = data.error || 'Failed to create child profile';
+        alertBox.style.display = 'flex';
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Create Profile';
+      } else {
+        alertBox.className = 'ntut-alert ntut-alert-success';
+        alertBox.innerText = 'Child profile created! Reloading...';
+        alertBox.style.display = 'flex';
+        
+        setTimeout(() => {
+          window.location.reload();
+        }, 800);
+      }
+    } catch (err) {
+      console.error(err);
+      alertBox.className = 'ntut-alert ntut-alert-danger';
+      alertBox.innerText = 'Network error. Please try again.';
+      alertBox.style.display = 'flex';
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Create Profile';
+    }
+  });
+
+  // Select Child profile active session and redirect
+  async function selectProfile(learnerId) {
+    try {
+      const response = await fetch('/api/learners/select', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ learnerId })
+      });
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        window.location.href = '/learner-dashboard';
+      } else {
+        alert('Could not select profile: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error switching profile');
+    }
+  }
+</script>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,492 @@
+<%- include('../partials/header', { title: 'Teacher Admin Panel' }) %>
+<%- include('../partials/nav') %>
+
+<main class="ntut-main-content">
+  <div style="margin-bottom: 2rem;">
+    <h1 class="ntut-h1" style="margin-bottom: 0.25rem;">Teacher Dashboard</h1>
+    <p class="ntut-p">Manage educational content, quiz questions, and monitor all student performance statistics.</p>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="ntut-tab-container">
+    <button class="ntut-btn ntut-btn-outline ntut-tab-btn active-tab-btn" onclick="switchTab('students')" id="tab-btn-students">
+      🎓 Student Progress
+    </button>
+    <button class="ntut-btn ntut-btn-outline ntut-tab-btn" onclick="switchTab('lessons')" id="tab-btn-lessons">
+      📚 Manage Lessons
+    </button>
+    <button class="ntut-btn ntut-btn-outline ntut-tab-btn" onclick="switchTab('questions')" id="tab-btn-questions">
+      ❓ Manage Quiz Questions
+    </button>
+  </div>
+
+  <!-- ================= TAB 1: STUDENTS PROGRESS ================= -->
+  <div id="tab-students" class="dashboard-tab">
+    <div class="ntut-card">
+      <h2 class="ntut-h2" style="border-bottom: 2px solid var(--ntut-border); padding-bottom: 0.5rem; margin-bottom: 1.5rem;">
+        Student Progress Directory
+      </h2>
+      <% if (learners.length === 0) { %>
+        <p class="ntut-p" style="font-style: italic;">No student accounts are registered in the system yet.</p>
+      <% } else { %>
+        <div class="ntut-table-wrapper">
+          <table class="ntut-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Parent Account</th>
+                <th>English Completion</th>
+                <th>Math Completion</th>
+                <th>Quiz Avg</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% learners.forEach(student => { %>
+                <tr>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                      <div class="ntut-kid-badge-avatar ntut-avatar-<%= student.profile.avatar %>" style="width: 32px; height: 32px; font-size: 1.15rem;">
+                        <%= student.profile.avatar === 'bunny' ? '🐰' : 
+                            student.profile.avatar === 'bear' ? '🐻' : 
+                            student.profile.avatar === 'cat' ? '🐱' : 
+                            student.profile.avatar === 'fox' ? '🦊' : 
+                            student.profile.avatar === 'lion' ? '🦁' : '🐼' %>
+                      </div>
+                      <strong><%= student.profile.name %></strong>
+                    </div>
+                  </td>
+                  <td>
+                    <%= student.profile.parent_name %> 
+                    <div style="font-size: 0.8rem; color: var(--ntut-text-muted);"><%= student.profile.parent_email %></div>
+                  </td>
+                  <td>
+                    <strong><%= student.progress.subjects.english.completed %>/<%= student.progress.subjects.english.total %></strong>
+                    (<%= student.progress.subjects.english.percentage %>%)
+                  </td>
+                  <td>
+                    <strong><%= student.progress.subjects.math.completed %>/<%= student.progress.subjects.math.total %></strong>
+                    (<%= student.progress.subjects.math.percentage %>%)
+                  </td>
+                  <td>
+                    <strong><%= student.progress.overall.avgQuizScore %>%</strong>
+                  </td>
+                  <td>
+                    <button onclick="previewStudentPortal(<%= student.profile.id %>)" class="ntut-btn ntut-btn-success" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; box-shadow: none;">
+                      👁️ Preview Portal
+                    </button>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- ================= TAB 2: MANAGE LESSONS ================= -->
+  <div id="tab-lessons" class="dashboard-tab" style="display: none;">
+    <div class="ntut-grid-2">
+      <!-- Create / Edit Form -->
+      <div class="ntut-card">
+        <h2 class="ntut-h2" id="lesson-form-title">Create Lesson Unit</h2>
+        <form id="lesson-crud-form">
+          <input type="hidden" id="lesson-id" name="id">
+          
+          <div class="ntut-form-group">
+            <label for="lesson-subject" class="ntut-form-label">Subject</label>
+            <select id="lesson-subject" name="subject" class="ntut-form-select" required>
+              <option value="english">English</option>
+              <option value="math">Mathematics</option>
+            </select>
+          </div>
+
+          <div class="ntut-form-group">
+            <label for="lesson-title" class="ntut-form-label">Lesson Title</label>
+            <input type="text" id="lesson-title" name="title" class="ntut-form-input" placeholder="e.g. Counting (1 to 5)" required>
+          </div>
+
+          <div class="ntut-form-group">
+            <label for="lesson-seq" class="ntut-form-label">Sequence Order</label>
+            <input type="number" id="lesson-seq" name="sequence_order" class="ntut-form-input" placeholder="1" required min="1">
+          </div>
+
+          <div class="ntut-form-group">
+            <label for="lesson-anim" class="ntut-form-label">Animation Asset Identifier</label>
+            <select id="lesson-anim" name="animation_asset" class="ntut-form-select" required>
+              <option value="alphabet_safari">alphabet_safari (A to G)</option>
+              <option value="phonics_fun">phonics_fun (Vowels)</option>
+              <option value="word_building">word_building (C-A-T, D-O-G)</option>
+              <option value="number_magic">number_magic (1 to 5)</option>
+              <option value="counting_friends">counting_friends (Counting shapes)</option>
+              <option value="playful_addition">playful_addition (Addition visualizer)</option>
+            </select>
+          </div>
+
+          <div class="ntut-form-group">
+            <label for="lesson-audio" class="ntut-form-label">Audio Asset Filename (Optional)</label>
+            <input type="text" id="lesson-audio" name="audio_asset" class="ntut-form-input" placeholder="e.g. counting.mp3">
+          </div>
+
+          <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+            <button type="submit" class="ntut-btn ntut-btn-primary" id="btn-lesson-submit" style="flex: 1;">Save Lesson</button>
+            <button type="button" class="ntut-btn ntut-btn-outline" id="btn-lesson-cancel" onclick="resetLessonForm()" style="display: none;">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Lessons List -->
+      <div class="ntut-card">
+        <h2 class="ntut-h2">Lesson Units Directory</h2>
+        <div class="ntut-table-wrapper">
+          <table class="ntut-table">
+            <thead>
+              <tr>
+                <th>Seq</th>
+                <th>Subject</th>
+                <th>Title</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% lessons.forEach(lesson => { %>
+                <tr>
+                  <td><%= lesson.sequence_order %></td>
+                  <td>
+                    <span class="ntut-badge <%= lesson.subject === 'english' ? 'ntut-badge-english' : 'ntut-badge-math' %>">
+                      <%= lesson.subject %>
+                    </span>
+                  </td>
+                  <td><strong><%= lesson.title %></strong></td>
+                  <td>
+                    <div style="display: flex; gap: 0.5rem;">
+                      <button onclick='editLesson(<%= JSON.stringify(lesson) %>)' class="ntut-btn ntut-btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; box-shadow: none;">
+                        Edit
+                      </button>
+                      <button onclick="deleteLesson(<%= lesson.id %>)" class="ntut-btn ntut-btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; box-shadow: none;">
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TAB 3: MANAGE QUESTIONS ================= -->
+  <div id="tab-questions" class="dashboard-tab" style="display: none;">
+    <div class="ntut-grid-2">
+      <!-- Create / Edit Form -->
+      <div class="ntut-card">
+        <h2 class="ntut-h2" id="question-form-title">Create Quiz Question</h2>
+        <form id="question-crud-form">
+          <input type="hidden" id="question-id" name="id">
+          
+          <div class="ntut-form-group">
+            <label for="q-lesson-id" class="ntut-form-label">Linked Lesson Unit</label>
+            <select id="q-lesson-id" name="lesson_unit_id" class="ntut-form-select" required>
+              <% lessons.forEach(lesson => { %>
+                <option value="<%= lesson.id %>">
+                  [<%= lesson.subject.toUpperCase() %>] <%= lesson.title %>
+                </option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="ntut-form-group">
+            <label for="q-text" class="ntut-form-label">Question Text</label>
+            <textarea id="q-text" name="question_text" class="ntut-form-input" style="height: 80px;" placeholder="e.g. Which letter comes after A?" required></textarea>
+          </div>
+
+          <div class="ntut-form-group">
+            <label class="ntut-form-label">Options (Must write 4 choices)</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+              <input type="text" id="q-opt-1" class="ntut-form-input" placeholder="Option A" required>
+              <input type="text" id="q-opt-2" class="ntut-form-input" placeholder="Option B" required>
+              <input type="text" id="q-opt-3" class="ntut-form-input" placeholder="Option C" required>
+              <input type="text" id="q-opt-4" class="ntut-form-input" placeholder="Option D" required>
+            </div>
+          </div>
+
+          <div class="ntut-form-group">
+            <label for="q-correct" class="ntut-form-label">Correct Option (Must match exactly one of the options above)</label>
+            <input type="text" id="q-correct" name="correct_option" class="ntut-form-input" placeholder="e.g. Option A" required>
+          </div>
+
+          <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+            <button type="submit" class="ntut-btn ntut-btn-primary" id="btn-question-submit" style="flex: 1;">Save Question</button>
+            <button type="button" class="ntut-btn ntut-btn-outline" id="btn-question-cancel" onclick="resetQuestionForm()" style="display: none;">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Questions List -->
+      <div class="ntut-card">
+        <h2 class="ntut-h2">Questions Directory</h2>
+        <div class="ntut-table-wrapper">
+          <table class="ntut-table">
+            <thead>
+              <tr>
+                <th>Lesson</th>
+                <th>Question</th>
+                <th>Correct Ans</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% questions.forEach(q => { %>
+                <tr>
+                  <td style="font-size: 0.85rem;">
+                    <span class="ntut-badge <%= q.lesson_subject === 'english' ? 'ntut-badge-english' : 'ntut-badge-math' %>" style="display: block; text-align: center; margin-bottom: 0.25rem;">
+                      <%= q.lesson_subject %>
+                    </span>
+                    <%= q.lesson_title %>
+                  </td>
+                  <td><strong><%= q.question_text %></strong></td>
+                  <td style="color: var(--ntut-success); font-weight: bold;"><%= q.correct_option %></td>
+                  <td>
+                    <div style="display: flex; gap: 0.5rem;">
+                      <button onclick='editQuestion(<%= JSON.stringify(q) %>)' class="ntut-btn ntut-btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; box-shadow: none;">
+                        Edit
+                      </button>
+                      <button onclick="deleteQuestion(<%= q.id %>)" class="ntut-btn ntut-btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; box-shadow: none;">
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Tab Switching Logic
+  function switchTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.dashboard-tab').forEach(tab => {
+      tab.style.display = 'none';
+    });
+    
+    // Deactivate all tab buttons
+    document.querySelectorAll('[id^="tab-btn-"]').forEach(btn => {
+      btn.style.backgroundColor = 'transparent';
+      btn.classList.remove('active-tab-btn');
+    });
+
+    // Show selected tab
+    document.getElementById('tab-' + tabName).style.display = 'block';
+
+    // Highlight button
+    const activeBtn = document.getElementById('tab-btn-' + tabName);
+    activeBtn.style.backgroundColor = 'var(--ntut-white)';
+    activeBtn.classList.add('active-tab-btn');
+  }
+
+  // Preview Student portal (Teacher selection)
+  async function previewStudentPortal(learnerId) {
+    try {
+      const response = await fetch('/api/learners/select', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ learnerId })
+      });
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        window.location.href = '/learner-dashboard';
+      } else {
+        alert('Could not switch to student preview mode');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error switching profile');
+    }
+  }
+
+  /* ================= LESSON CRUD HANDLERS ================= */
+  
+  function editLesson(lesson) {
+    document.getElementById('lesson-form-title').innerText = 'Edit Lesson Unit';
+    document.getElementById('lesson-id').value = lesson.id;
+    document.getElementById('lesson-subject').value = lesson.subject;
+    document.getElementById('lesson-title').value = lesson.title;
+    document.getElementById('lesson-seq').value = lesson.sequence_order;
+    document.getElementById('lesson-anim').value = lesson.animation_asset;
+    document.getElementById('lesson-audio').value = lesson.audio_asset || '';
+    
+    document.getElementById('btn-lesson-cancel').style.display = 'inline-flex';
+  }
+
+  function resetLessonForm() {
+    document.getElementById('lesson-form-title').innerText = 'Create Lesson Unit';
+    document.getElementById('lesson-crud-form').reset();
+    document.getElementById('lesson-id').value = '';
+    document.getElementById('btn-lesson-cancel').style.display = 'none';
+  }
+
+  document.getElementById('lesson-crud-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('lesson-id').value;
+    const subject = document.getElementById('lesson-subject').value;
+    const title = document.getElementById('lesson-title').value;
+    const sequence_order = document.getElementById('lesson-seq').value;
+    const animation_asset = document.getElementById('lesson-anim').value;
+    const audio_asset = document.getElementById('lesson-audio').value;
+
+    const url = id ? `/api/lessons/${id}/update` : '/api/lessons';
+    
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subject, title, sequence_order, animation_asset, audio_asset })
+      });
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        alert(data.message);
+        window.location.reload();
+      } else {
+        alert('Error: ' + (data.error || 'Request failed'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error submitting lesson');
+    }
+  });
+
+  async function deleteLesson(lessonId) {
+    if (!confirm('Are you sure you want to delete this lesson? All associated quizzes and scores will also be deleted.')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/lessons/${lessonId}/delete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        alert(data.message);
+        window.location.reload();
+      } else {
+        alert('Error deleting lesson: ' + (data.error || 'Request failed'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error deleting lesson');
+    }
+  }
+
+
+  /* ================= QUIZ QUESTION CRUD HANDLERS ================= */
+
+  function editQuestion(q) {
+    document.getElementById('question-form-title').innerText = 'Edit Quiz Question';
+    document.getElementById('question-id').value = q.id;
+    document.getElementById('q-lesson-id').value = q.lesson_unit_id;
+    document.getElementById('q-text').value = q.question_text;
+    document.getElementById('q-correct').value = q.correct_option;
+
+    let opts = [];
+    try {
+      opts = typeof q.options === 'string' ? JSON.parse(q.options) : q.options;
+    } catch (e) {
+      opts = q.options || [];
+    }
+
+    document.getElementById('q-opt-1').value = opts[0] || '';
+    document.getElementById('q-opt-2').value = opts[1] || '';
+    document.getElementById('q-opt-3').value = opts[2] || '';
+    document.getElementById('q-opt-4').value = opts[3] || '';
+
+    document.getElementById('btn-question-cancel').style.display = 'inline-flex';
+  }
+
+  function resetQuestionForm() {
+    document.getElementById('question-form-title').innerText = 'Create Quiz Question';
+    document.getElementById('question-crud-form').reset();
+    document.getElementById('question-id').value = '';
+    document.getElementById('btn-question-cancel').style.display = 'none';
+  }
+
+  document.getElementById('question-crud-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = document.getElementById('question-id').value;
+    const lesson_unit_id = document.getElementById('q-lesson-id').value;
+    const question_text = document.getElementById('q-text').value;
+    const correct_option = document.getElementById('q-correct').value;
+
+    // Collect options array
+    const options = [
+      document.getElementById('q-opt-1').value.trim(),
+      document.getElementById('q-opt-2').value.trim(),
+      document.getElementById('q-opt-3').value.trim(),
+      document.getElementById('q-opt-4').value.trim()
+    ];
+
+    // Ensure correct option matches one of the values
+    if (!options.includes(correct_option.trim())) {
+      alert('The Correct Option MUST match exactly one of the 4 choice inputs.');
+      return;
+    }
+
+    const url = id ? `/api/quizzes/questions/${id}/update` : '/api/quizzes/questions';
+    
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lesson_unit_id, question_text, options, correct_option })
+      });
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        alert(data.message);
+        window.location.reload();
+      } else {
+        alert('Error: ' + (data.error || 'Request failed'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error saving question');
+    }
+  });
+
+  async function deleteQuestion(questionId) {
+    if (!confirm('Are you sure you want to delete this question?')) {
+      return;
+    }
+    
+    try {
+      const response = await fetch(`/api/quizzes/questions/${questionId}/delete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await response.json();
+      
+      if (response.ok && data.success) {
+        alert(data.message);
+        window.location.reload();
+      } else {
+        alert('Error deleting question: ' + (data.error || 'Request failed'));
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Network error deleting question');
+    }
+  }
+</script>
+
+<%- include('../partials/footer') %>

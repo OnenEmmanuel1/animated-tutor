@@ -1,0 +1,225 @@
+<%- include('../partials/header', { title: 'Play portal', bodyClass: 'ntut-learner-body' }) %>
+<%- include('../partials/nav', { isLearnerView: true, backUrl: '/learner-select', learner: learner }) %>
+
+<main class="ntut-main-content ntut-kid-dashboard">
+  
+  <!-- Mascot Welcome Header -->
+  <div class="ntut-kid-welcome-header">
+    <div class="ntut-kid-welcome-flex">
+      <div class="ntut-kid-welcome-text-box">
+        <h1 class="ntut-kid-welcome-title">Welcome, <%= learner.name %></h1>
+        <!-- Yellow daily challenge callout -->
+        <div class="ntut-kid-challenge-banner">
+          Solve <strong>3 problems</strong> today and unlock a reward! Let's make it fun together!
+        </div>
+      </div>
+      <div class="ntut-kid-welcome-mascot-box">
+        <img src="/images/octopus_laptop.png" alt="Octopus Tutor" class="ntut-kid-welcome-mascot">
+      </div>
+    </div>
+  </div>
+
+  <!-- Streak Row -->
+  <div class="ntut-kid-streak-container">
+    <div class="ntut-kid-streak-row">
+      <div class="ntut-kid-streak-day ntut-active">
+        <div class="ntut-streak-circle">⚡</div>
+        <span class="ntut-streak-label">Today</span>
+      </div>
+      <div class="ntut-kid-streak-day">
+        <div class="ntut-streak-circle">⚡</div>
+        <span class="ntut-streak-label">T</span>
+      </div>
+      <div class="ntut-kid-streak-day">
+        <div class="ntut-streak-circle">⚡</div>
+        <span class="ntut-streak-label">W</span>
+      </div>
+      <div class="ntut-kid-streak-day">
+        <div class="ntut-streak-circle">⚡</div>
+        <span class="ntut-streak-label">T</span>
+      </div>
+      <div class="ntut-kid-streak-day">
+        <div class="ntut-streak-circle">⚡</div>
+        <span class="ntut-streak-label">F</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Continue Lesson Card -->
+  <%
+    // Find the first lesson that is in_progress, else first not_started, else first lesson
+    let continueLesson = progress.lessons.find(l => l.status === 'in_progress');
+    if (!continueLesson) {
+      const sortedLessons = [...progress.lessons].sort((a,b) => {
+        if (a.subject !== b.subject) return a.subject.localeCompare(b.subject);
+        return a.sequence - b.sequence;
+      });
+      continueLesson = sortedLessons.find(l => l.status === 'not_started');
+    }
+    if (!continueLesson && progress.lessons.length > 0) {
+      continueLesson = progress.lessons[0];
+    }
+  %>
+  <% if (continueLesson) { %>
+    <div class="ntut-kid-current-lesson-section">
+      <h2 class="ntut-kid-section-title">You're Almost There!</h2>
+      <div class="ntut-kid-current-card">
+        <div class="ntut-kid-progress-header">
+          <div class="ntut-kid-card-progress-bar">
+            <!-- Progress can match actual overall progress percentage -->
+            <div class="ntut-kid-card-progress-fill" style="width: <%= progress.overall.percentage %>%;"></div>
+          </div>
+          <span class="ntut-kid-progress-pct"><%= progress.overall.percentage %>%</span>
+        </div>
+        <div class="ntut-kid-card-image-box">
+          <span class="ntut-kid-card-emoji">
+            <%= continueLesson.subject === 'english' ? '🦁' : '🦖' %>
+          </span>
+        </div>
+        <div class="ntut-kid-card-info">
+          <span class="ntut-kid-card-level-label">LEVEL <%= continueLesson.sequence %></span>
+          <h3 class="ntut-kid-card-lesson-title"><%= continueLesson.title %></h3>
+        </div>
+        <a href="/lesson/<%= continueLesson.id %>" class="ntut-kid-continue-btn">
+          Continue Lesson
+        </a>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Lesson Paths View -->
+  <div class="ntut-kid-lesson-paths-grid">
+    
+    <!-- English Safari Column -->
+    <div class="ntut-kid-path-track ntut-track-english">
+      <div class="ntut-kid-track-header">
+        <span class="ntut-kid-track-icon-badge">🦁</span>
+        <h3 class="ntut-kid-track-title">English Safari</h3>
+      </div>
+      <div class="ntut-kid-track-body">
+        <% 
+          let englishLessons = progress.lessons.filter(l => l.subject === 'english').sort((a,b) => a.sequence - b.sequence);
+          englishLessons.forEach((lesson, index) => {
+            let isUnlocked = true;
+            if (index > 0) {
+              const previousLesson = englishLessons[index - 1];
+              isUnlocked = (previousLesson.status === 'completed');
+            }
+        %>
+          <div class="ntut-path-node-item <%= isUnlocked ? 'ntut-unlocked' : 'ntut-locked' %>" id="lesson-node-<%= lesson.id %>">
+            <!-- Dotted line connector to next node -->
+            <% if (index < englishLessons.length - 1) { %>
+              <div class="ntut-path-connector-line"></div>
+            <% } %>
+            
+            <% if (isUnlocked) { %>
+              <a href="/lesson/<%= lesson.id %>" class="ntut-path-node-circle <%= lesson.status === 'completed' ? 'ntut-completed' : 'ntut-in-progress' %>">
+                <% if (lesson.status === 'completed') { %>
+                  🏆
+                <% } else { %>
+                  ⚡
+                <% } %>
+              </a>
+              <div class="ntut-path-node-info">
+                <span class="ntut-path-level-label">LEVEL <%= index + 1 %></span>
+                <span class="ntut-path-level-title"><%= lesson.title %></span>
+              </div>
+            <% } else { %>
+              <div class="ntut-path-node-circle ntut-locked-node" onclick="playLockedSpeech()">
+                🔒
+              </div>
+              <div class="ntut-path-node-info">
+                <span class="ntut-path-level-label text-muted">LEVEL <%= index + 1 %></span>
+                <span class="ntut-path-level-title text-muted"><%= lesson.title %></span>
+              </div>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Math Magic Column -->
+    <div class="ntut-kid-path-track ntut-track-math">
+      <div class="ntut-kid-track-header">
+        <span class="ntut-kid-track-icon-badge">🦖</span>
+        <h3 class="ntut-kid-track-title">Math Magic</h3>
+      </div>
+      <div class="ntut-kid-track-body">
+        <% 
+          let mathLessons = progress.lessons.filter(l => l.subject === 'math').sort((a,b) => a.sequence - b.sequence);
+          mathLessons.forEach((lesson, index) => {
+            let isUnlocked = true;
+            if (index > 0) {
+              const previousLesson = mathLessons[index - 1];
+              isUnlocked = (previousLesson.status === 'completed');
+            }
+        %>
+          <div class="ntut-path-node-item <%= isUnlocked ? 'ntut-unlocked' : 'ntut-locked' %>" id="lesson-node-<%= lesson.id %>">
+            <!-- Dotted line connector to next node -->
+            <% if (index < mathLessons.length - 1) { %>
+              <div class="ntut-path-connector-line"></div>
+            <% } %>
+
+            <% if (isUnlocked) { %>
+              <a href="/lesson/<%= lesson.id %>" class="ntut-path-node-circle <%= lesson.status === 'completed' ? 'ntut-completed' : 'ntut-in-progress' %>">
+                <% if (lesson.status === 'completed') { %>
+                  🏆
+                <% } else { %>
+                  ⚡
+                <% } %>
+              </a>
+              <div class="ntut-path-node-info">
+                <span class="ntut-path-level-label">LEVEL <%= index + 1 %></span>
+                <span class="ntut-path-level-title"><%= lesson.title %></span>
+              </div>
+            <% } else { %>
+              <div class="ntut-path-node-circle ntut-locked-node" onclick="playLockedSpeech()">
+                🔒
+              </div>
+              <div class="ntut-path-node-info">
+                <span class="ntut-path-level-label text-muted">LEVEL <%= index + 1 %></span>
+                <span class="ntut-path-level-title text-muted"><%= lesson.title %></span>
+              </div>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Speech bubble Tip callout -->
+  <div class="ntut-kid-speech-bubble-wrapper">
+    <img src="/images/octopus_smile.png" alt="Octopus Waving" class="ntut-kid-speech-mascot">
+    <div class="ntut-kid-speech-bubble">
+      <strong>Did you know?</strong> Completing a lesson unlocks a fun challenge quiz to test your super brain power! 🌟
+    </div>
+  </div>
+
+</main>
+
+<!-- Bottom Tab Bar -->
+<div class="ntut-kid-bottom-bar">
+  <a href="/learner-dashboard" class="ntut-bottom-tab ntut-active">
+    <span class="ntut-tab-icon">🐙</span>
+    <span class="ntut-tab-label">Home</span>
+  </a>
+  <a href="/learner-select" class="ntut-bottom-tab">
+    <span class="ntut-tab-icon">👥</span>
+    <span class="ntut-tab-label">Profiles</span>
+  </a>
+  <a href="/parent-dashboard" class="ntut-bottom-tab">
+    <span class="ntut-tab-icon">⚙️</span>
+    <span class="ntut-tab-label">Parent Hub</span>
+  </a>
+</div>
+
+<script src="/js/audio.js"></script>
+<script>
+  function playLockedSpeech() {
+    NtutAudio.playCue('error');
+    NtutAudio.speak("This lesson is locked! Complete the lesson before it to unlock the adventure!");
+  }
+</script>
+
+<%- include('../partials/footer') %>
