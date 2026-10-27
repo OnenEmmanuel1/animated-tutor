@@ -71,10 +71,13 @@ router.post('/select', requireLogin, async (req, res) => {
     req.session.learnerName = selectedLearner.name;
     req.session.learnerAvatar = selectedLearner.avatar;
 
-    res.json({
-      success: true,
-      message: `Switched to profile: ${selectedLearner.name}`,
-      learner: selectedLearner
+    req.session.save((saveErr) => {
+      if (saveErr) console.warn('Session save warning on select:', saveErr.message);
+      return res.json({
+        success: true,
+        message: `Switched to profile: ${selectedLearner.name}`,
+        learner: selectedLearner
+      });
     });
   } catch (err) {
     console.error('Select learner profile error:', err);

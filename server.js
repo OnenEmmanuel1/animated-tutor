@@ -26,6 +26,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.get('/favicon.ico', (req, res) => res.redirect(301, '/favicon.svg'));
 
 // 3. Express Session Middleware Setup
 // Use RedisStore in production (REDIS_URL set), fall back to memory store locally.

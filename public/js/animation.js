@@ -126,21 +126,50 @@ class NtutLessonPlayer {
   }
 
   showQuizPrompt() {
+    if (document.getElementById('lesson-quiz-prompt-overlay')) return;
+
     const promptContainer = document.createElement('div');
+    promptContainer.id = 'lesson-quiz-prompt-overlay';
     promptContainer.style.position = 'absolute';
-    promptContainer.style.bottom = '20px';
+    promptContainer.style.top = '0';
     promptContainer.style.left = '0';
     promptContainer.style.right = '0';
+    promptContainer.style.bottom = '0';
+    promptContainer.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+    promptContainer.style.zIndex = '50';
     promptContainer.style.display = 'flex';
+    promptContainer.style.flexDirection = 'column';
+    promptContainer.style.alignItems = 'center';
     promptContainer.style.justifyContent = 'center';
+    promptContainer.style.padding = '1.5rem';
+    promptContainer.style.textAlign = 'center';
+    promptContainer.style.animation = 'ntutPulse 0.3s ease-out';
+
     promptContainer.innerHTML = `
-      <a href="/quiz/${this.lessonId}" class="ntut-btn ntut-btn-secondary ntut-kid-btn-giant" style="animation: ntutPulse 1.5s infinite ease-in-out;">
-        🎮 Play the Quiz!
-      </a>
+      <div style="font-size: 5rem; margin-bottom: 0.5rem; animation: ntutBounce 1.2s infinite alternate ease-in-out;">🎉</div>
+      <h2 class="ntut-h1" style="font-family: var(--ntut-font-kid); font-weight: 900; margin-bottom: 0.5rem; color: var(--ntut-dark);">
+        Lesson Complete!
+      </h2>
+      <p style="font-size: 1.25rem; font-weight: 700; color: var(--ntut-text-muted); margin-bottom: 1.5rem; max-width: 420px;">
+        Super job finishing all cards! Now test your super brain power in the quiz!
+      </p>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+        <a href="/quiz/${this.lessonId}" class="ntut-btn ntut-btn-secondary ntut-kid-btn-giant" style="animation: ntutPulse 1.5s infinite ease-in-out; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem;">
+          🎮 Play the Quiz!
+        </a>
+        <button id="btn-replay-lesson-prompt" class="ntut-btn ntut-btn-outline" style="font-size: 1.1rem; padding: 0.85rem 1.5rem;">
+          🔁 Replay Cards
+        </button>
+      </div>
     `;
     this.canvas.appendChild(promptContainer);
-    
-    // Play a friendly success sound once
+
+    document.getElementById('btn-replay-lesson-prompt')?.addEventListener('click', () => {
+      promptContainer.remove();
+      this.currentStep = 0;
+      this.renderStep();
+    });
+
     NtutAudio.playCue('success');
   }
 
@@ -320,9 +349,13 @@ class NtutLessonPlayer {
     if (this.currentStep < this.slides.length - 1) {
       this.currentStep++;
       this.renderStep();
+      if (this.currentStep === this.slides.length - 1) {
+        this.markLessonComplete();
+      }
     } else {
-      // Completed, call completion tracking API
+      // Already on last slide, mark complete and show prompt
       this.markLessonComplete();
+      this.showQuizPrompt();
     }
   }
 

@@ -1419,14 +1419,16 @@ a {
   align-items: center;
   justify-content: center;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
   z-index: 1000;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
   padding: 1rem;
 }
 
 .ntut-modal-overlay.ntut-show {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
 }
 
@@ -1577,13 +1579,23 @@ a {
   max-width: 100%;
 }
 
-/* Mobile media query overrides for adult navigation */
+/* Touch friendliness for all buttons and interactive elements */
+button, a, input, select, .ntut-control-btn, .ntut-profile-card, .ntut-quiz-option-btn, .ntut-bottom-tab {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ========================================== */
+/*   RESPONSIVE OVERRIDES FOR TABLETS & PHONES */
+/* ========================================== */
+
 @media (max-width: 768px) {
+  /* Navigation Bar */
   .ntut-navbar {
     flex-direction: column;
     align-items: center;
-    padding: 1rem;
-    gap: 1rem;
+    padding: 0.85rem 1rem;
+    gap: 0.75rem;
     text-align: center;
   }
 
@@ -1591,29 +1603,271 @@ a {
     flex-direction: column;
     align-items: stretch;
     width: 100%;
-    gap: 0.75rem;
+    gap: 0.6rem;
   }
 
   .ntut-nav-link {
     text-align: center;
-    padding: 0.5rem 0;
+    padding: 0.4rem 0;
     border-bottom: 1.5px dashed var(--ntut-border);
     width: 100%;
+    font-size: 0.95rem;
   }
 
   #user-display {
     border-bottom: 2px solid var(--ntut-dark);
-    padding-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.35rem;
   }
 
   .ntut-navbar .ntut-btn {
     width: 100%;
     justify-content: center;
-    padding: 0.85rem 1.5rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 1rem;
+  }
+
+  /* Main content container */
+  .ntut-main-content {
+    padding: 1.25rem 0.85rem;
+  }
+
+  /* Kid Header */
+  .ntut-kid-header {
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
+  }
+
+  .ntut-kid-back-link {
+    font-size: 1rem;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .ntut-kid-header .ntut-nav-logo {
+    font-size: 1.35rem;
+  }
+
+  .ntut-kid-profile-badge {
+    padding: 0.3rem 0.6rem;
+    gap: 0.5rem;
+  }
+
+  .ntut-kid-badge-name {
+    font-size: 0.95rem;
+  }
+
+  /* Kid Mascot Header */
+  .ntut-kid-welcome-header {
+    padding: 1.25rem;
+  }
+
+  .ntut-kid-welcome-title {
+    font-size: 2rem;
+  }
+
+  .ntut-kid-challenge-banner {
+    font-size: 1rem;
+    padding: 0.85rem 1rem;
+  }
+
+  .ntut-kid-welcome-mascot-box {
+    width: 90px;
+    height: 90px;
+  }
+
+  /* Lesson Card */
+  .ntut-kid-current-card {
+    padding: 1.25rem;
+  }
+
+  .ntut-kid-card-lesson-title {
+    font-size: 1.5rem;
+  }
+
+  .ntut-kid-continue-btn {
+    font-size: 1.3rem;
+    padding: 1rem;
+  }
+
+  /* Grids */
+  .ntut-grid-2, .ntut-grid-3 {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Lesson controls bar */
+  .ntut-lesson-controls {
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  #prev-btn, #next-btn {
+    width: 65px;
+    height: 65px;
+    font-size: 2rem;
+    border-width: 4px;
+  }
+
+  .ntut-control-btn {
+    width: 55px;
+    height: 55px;
+    font-size: 1.6rem;
+    border-width: 3px;
+  }
+
+  /* Speech bubble */
+  .ntut-kid-speech-bubble-wrapper {
+    flex-direction: column;
+    text-align: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+  }
+
+  .ntut-kid-speech-bubble::before {
+    display: none;
+  }
+
+  /* Modals */
+  .ntut-feedback-modal {
+    padding: 1.5rem;
+    width: 94%;
+    max-height: 85vh;
+    overflow-y: auto;
+  }
+}
+
+/* ========================================== */
+/*   EXTRA SMALL MOBILE SCREENS (<= 480px)   */
+/* ========================================== */
+
+@media (max-width: 480px) {
+  .ntut-h1 { font-size: 1.75rem; }
+  .ntut-h2 { font-size: 1.4rem; }
+  .ntut-h3 { font-size: 1.15rem; }
+
+  /* Compact kid header */
+  .ntut-kid-header {
+    padding: 0.5rem 0.6rem;
+  }
+
+  .ntut-kid-header .ntut-nav-logo {
     font-size: 1.1rem;
+  }
+
+  .ntut-logo-icon {
+    padding: 0.15rem 0.35rem;
+    font-size: 0.9rem;
+  }
+
+  .ntut-kid-back-link {
+    font-size: 0.85rem;
+    padding: 0.35rem 0.6rem;
+  }
+
+  .ntut-kid-badge-name {
+    display: none; /* Icon-only on very narrow screens */
+  }
+
+  .ntut-kid-profile-badge {
+    padding: 0.2rem 0.4rem;
+  }
+
+  /* Streak row - wrap nicely on small screens */
+  .ntut-kid-streak-row {
+    gap: 0.5rem;
+  }
+
+  .ntut-streak-circle {
+    width: 46px;
+    height: 46px;
+    font-size: 1.35rem;
+    border-width: 3px;
+  }
+
+  .ntut-streak-label {
+    font-size: 0.85rem;
+  }
+
+  /* Lesson controls bar for mobile */
+  .ntut-lesson-controls {
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  #prev-btn, #next-btn {
+    width: 54px;
+    height: 54px;
+    font-size: 1.6rem;
+    border-width: 3px;
+  }
+
+  .ntut-control-btn {
+    width: 46px;
+    height: 46px;
+    font-size: 1.3rem;
+    border-width: 3px;
+  }
+
+  /* Quiz Question */
+  .ntut-quiz-question-box {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .ntut-quiz-text {
+    font-size: 1.5rem;
+  }
+
+  .ntut-quiz-instruction-banner {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .ntut-quiz-option-btn {
+    min-width: 100%;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    font-size: 1.25rem;
+  }
+
+  /* Profile card grid */
+  .ntut-learner-grid {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 1rem;
+  }
+
+  .ntut-profile-card {
+    padding: 1.25rem 0.75rem;
+  }
+
+  .ntut-profile-avatar {
+    width: 75px;
+    height: 75px;
+    font-size: 2.5rem;
+  }
+
+  .ntut-profile-name {
+    font-size: 1.35rem;
+  }
+
+  /* Bottom tab bar */
+  .ntut-kid-bottom-bar {
+    height: 65px;
+  }
+
+  .ntut-tab-icon {
+    font-size: 1.5rem;
+  }
+
+  .ntut-tab-label {
+    font-size: 0.8rem;
+  }
+
+  .ntut-kid-dashboard {
+    padding-bottom: 85px;
   }
 }
