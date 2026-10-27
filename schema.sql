@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS tutortoon_db;
-USE tutortoon_db;
+CREATE DATABASE IF NOT EXISTS tutortoon_db2;
+USE tutortoon_db2;
 
 -- 1. Users Table (Parents and Teacher/Admins)
 CREATE TABLE IF NOT EXISTS users (

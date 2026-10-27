@@ -1,4 +1,4 @@
-USE tutortoon_db;
+USE tutortoon_db2;
 
 -- Clear existing data (in reverse order of FK dependencies)
 DELETE FROM quiz_attempts;

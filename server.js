@@ -6,6 +6,10 @@ const session = require('express-session');
 const path = require('path');
 require('dotenv').config();
 
+// Redis session store (used in production / on Vercel)
+const RedisStore = require('connect-redis').default;
+const Redis = require('ioredis');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -19,15 +23,29 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // 3. Express Session Middleware Setup
-app.use(session({
+// Use RedisStore in production (REDIS_URL set), fall back to memory store locally.
+const sessionConfig = {
   secret: process.env.SESSION_SECRET || 'tutortoon_secret_key_987654321',
   resave: false,
   saveUninitialized: false,
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    secure: false // Set to true in production if running HTTPS
+    secure: process.env.VERCEL === '1' // HTTPS-only cookies on Vercel
   }
-}));
+};
+
+if (process.env.REDIS_URL) {
+  const redisClient = new Redis(process.env.REDIS_URL, {
+    tls: process.env.REDIS_URL.startsWith('rediss://') ? {} : undefined
+  });
+  redisClient.on('error', (err) => console.error('Redis client error:', err));
+  sessionConfig.store = new RedisStore({ client: redisClient, prefix: 'tutortoon:' });
+  console.log('Session store: Redis (Upstash)');
+} else {
+  console.warn('REDIS_URL not set — using in-memory session store (local dev only).');
+}
+
+app.use(session(sessionConfig));
 
 // Provide global access to session variables inside EJS templates
 app.use((req, res, next) => {
@@ -74,9 +92,14 @@ app.use((err, req, res, next) => {
   res.send('Something went wrong! Please reload or contact an administrator.');
 });
 
-// 8. Start Application Server
-app.listen(PORT, () => {
-  console.log(`==================================================`);
-  console.log(`  TUTORTOON SERVER RUNNING AT http://localhost:${PORT}`);
-  console.log(`==================================================`);
-});
+// 8. Start Application Server (local dev only — Vercel uses the exported app)
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`==================================================`);
+    console.log(`  TUTORTOON SERVER RUNNING AT http://localhost:${PORT}`);
+    console.log(`==================================================`);
+  });
+}
+
+// Export for Vercel serverless function
+module.exports = app;
