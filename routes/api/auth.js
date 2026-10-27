@@ -43,14 +43,22 @@ router.post('/register', async (req, res) => {
       role
     };
 
-    res.status(201).json({
-      success: true,
-      message: 'Account created successfully',
-      user: req.session.user
+    req.session.save((saveErr) => {
+      if (saveErr) {
+        console.warn('Session save warning:', saveErr.message);
+      }
+      return res.status(201).json({
+        success: true,
+        message: 'Account created successfully',
+        user: req.session.user
+      });
     });
   } catch (err) {
     console.error('Registration API error:', err);
-    res.status(500).json({ error: 'Internal server error during registration' });
+    res.status(500).json({ 
+      error: 'Internal server error during registration',
+      details: err.message
+    });
   }
 });
 

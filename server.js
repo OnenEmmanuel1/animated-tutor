@@ -7,11 +7,16 @@ const path = require('path');
 require('dotenv').config();
 
 // Redis session store (used in production / on Vercel)
-const RedisStore = require('connect-redis').default;
+const RedisStore = require('connect-redis').default || require('connect-redis');
 const Redis = require('ioredis');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Trust reverse proxy (required for HTTPS session cookies on Vercel)
+if (process.env.VERCEL === '1') {
+  app.set('trust proxy', 1);
+}
 
 // 1. Template Engine Configuration (EJS)
 app.set('view engine', 'ejs');
@@ -35,12 +40,38 @@ const sessionConfig = {
 };
 
 if (process.env.REDIS_URL) {
-  const redisClient = new Redis(process.env.REDIS_URL, {
-    tls: process.env.REDIS_URL.startsWith('rediss://') ? {} : undefined
-  });
-  redisClient.on('error', (err) => console.error('Redis client error:', err));
-  sessionConfig.store = new RedisStore({ client: redisClient, prefix: 'tutortoon:' });
-  console.log('Session store: Redis (Upstash)');
+  try {
+    let rawUrl = process.env.REDIS_URL.trim();
+    // Auto-clean if CLI command was pasted (e.g., redis-cli --tls -u redis://...)
+    const match = rawUrl.match(/(rediss?:\/\/[^\s"'`]+)/);
+    let cleanUrl = match ? match[1] : rawUrl;
+
+    // Upstash requires TLS (rediss://)
+    if (cleanUrl.includes('upstash.io') && cleanUrl.startsWith('redis://')) {
+      cleanUrl = cleanUrl.replace(/^redis:\/\//, 'rediss://');
+    }
+
+    const isTls = cleanUrl.startsWith('rediss://');
+
+    const redisClient = new Redis(cleanUrl, {
+      tls: isTls ? { rejectUnauthorized: false } : undefined,
+      maxRetriesPerRequest: 2,
+      connectTimeout: 5000,
+      retryStrategy(times) {
+        if (times > 3) return null; // Prevent hanging on serverless
+        return Math.min(times * 200, 1000);
+      }
+    });
+
+    redisClient.on('error', (err) => {
+      console.error('Redis client error:', err.message);
+    });
+
+    sessionConfig.store = new RedisStore({ client: redisClient, prefix: 'tutortoon:' });
+    console.log('Session store: Redis configured successfully');
+  } catch (err) {
+    console.error('Redis configuration failed, falling back to memory store:', err.message);
+  }
 } else {
   console.warn('REDIS_URL not set — using in-memory session store (local dev only).');
 }
