@@ -13,10 +13,8 @@ const Redis = require('ioredis');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Trust reverse proxy (required for HTTPS session cookies on Vercel)
-if (process.env.VERCEL === '1') {
-  app.set('trust proxy', 1);
-}
+// Trust all proxy hops (required for Vercel multi-tier reverse proxies)
+app.set('trust proxy', true);
 
 // 1. Template Engine Configuration (EJS)
 app.set('view engine', 'ejs');
@@ -30,12 +28,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 // 3. Express Session Middleware Setup
 // Use RedisStore in production (REDIS_URL set), fall back to memory store locally.
 const sessionConfig = {
+  name: 'tutortoon.sid',
   secret: process.env.SESSION_SECRET || 'tutortoon_secret_key_987654321',
   resave: false,
   saveUninitialized: false,
+  proxy: true, // Tell express-session to trust the reverse proxy
   cookie: {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    secure: process.env.VERCEL === '1' // HTTPS-only cookies on Vercel
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: false // Safe because Vercel enforces HTTPS on the edge domain
   }
 };
 
