@@ -58,6 +58,7 @@
     submitBtn.innerText = 'Creating account...';
 
     try {
+      console.log('[AUTH-DEBUG] signup request starting');
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -66,6 +67,7 @@
       });
       
       const data = await response.json();
+      console.log('[AUTH-DEBUG] signup response received', { status: response.status, ok: response.ok, hasUser: Boolean(data.user) });
       
       if (!response.ok || data.error) {
         alertBox.className = 'ntut-alert ntut-alert-danger';
@@ -79,6 +81,7 @@
         alertBox.style.display = 'flex';
         
         setTimeout(() => {
+          console.log('[AUTH-DEBUG] signup redirect starting', { role: data.user.role });
           if (data.user.role === 'teacher_admin') {
             window.location.replace('/teacher-dashboard');
           } else {

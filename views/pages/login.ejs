@@ -17,7 +17,7 @@
       <div class="ntut-alert ntut-alert-success" id="login-success-alert"><%= success %></div>
     <% } %>
 
-    <form id="login-form">
+    <form id="login-form" method="POST" action="/login">
       <div class="ntut-form-group">
         <label for="email" class="ntut-form-label">Email Address</label>
         <input type="email" id="email" name="email" class="ntut-form-input" placeholder="email@example.com" required autocomplete="email">
@@ -40,60 +40,9 @@
 </main>
 
 <script>
-  document.getElementById('login-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const alertBox = document.getElementById('alert-box');
+  document.getElementById('login-form').addEventListener('submit', () => {
     const submitBtn = document.getElementById('login-btn-submit');
-    
-    // Clear old state warnings
-    const oldErr = document.getElementById('login-error-alert');
-    const oldSucc = document.getElementById('login-success-alert');
-    if (oldErr) oldErr.style.display = 'none';
-    if (oldSucc) oldSucc.style.display = 'none';
-
-    submitBtn.disabled = true;
     submitBtn.innerText = 'Signing in...';
-
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'same-origin',
-        body: JSON.stringify({ email, password })
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok || data.error) {
-        alertBox.className = 'ntut-alert ntut-alert-danger';
-        alertBox.innerText = data.error || 'Invalid credentials';
-        alertBox.style.display = 'flex';
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Sign In';
-      } else {
-        alertBox.className = 'ntut-alert ntut-alert-success';
-        alertBox.innerText = 'Login successful! Redirecting...';
-        alertBox.style.display = 'flex';
-        
-        // Redirect based on user role
-        setTimeout(() => {
-          if (data.user.role === 'teacher_admin') {
-            window.location.replace('/teacher-dashboard');
-          } else {
-            window.location.replace('/parent-dashboard');
-          }
-        }, 500);
-      }
-    } catch (err) {
-      console.error(err);
-      alertBox.className = 'ntut-alert ntut-alert-danger';
-      alertBox.innerText = 'Network error. Please try again.';
-      alertBox.style.display = 'flex';
-      submitBtn.disabled = false;
-      submitBtn.innerText = 'Sign In';
-    }
   });
 </script>
 

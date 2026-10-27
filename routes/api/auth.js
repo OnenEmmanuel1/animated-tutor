@@ -8,6 +8,7 @@ const db = require('../../config/db');
 
 // Register API
 router.post('/register', async (req, res) => {
+  console.log('[AUTH-DEBUG] API registration request received');
   const { name, email, password, role } = req.body;
 
   if (!name || !email || !password || !role) {
@@ -45,8 +46,10 @@ router.post('/register', async (req, res) => {
 
     req.session.save((saveErr) => {
       if (saveErr) {
-        console.warn('Session save warning:', saveErr.message);
+        console.error('[AUTH-DEBUG] API registration session save failed:', saveErr.message);
+        return res.status(500).json({ error: 'Account created, but session could not be saved. Please log in.' });
       }
+      console.log('[AUTH-DEBUG] API registration session saved; sending 201');
       return res.status(201).json({
         success: true,
         message: 'Account created successfully',
@@ -64,6 +67,7 @@ router.post('/register', async (req, res) => {
 
 // Login API
 router.post('/login', async (req, res) => {
+  console.log('[AUTH-DEBUG] API login request received');
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -73,6 +77,7 @@ router.post('/login', async (req, res) => {
   try {
     // Retrieve user from DB
     const [users] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    console.log('[AUTH-DEBUG] API login database lookup complete', { userFound: users.length > 0 });
     if (users.length === 0) {
       return res.status(400).json({ error: 'Invalid email or password' });
     }
@@ -94,7 +99,11 @@ router.post('/login', async (req, res) => {
     };
 
     req.session.save((saveErr) => {
-      if (saveErr) console.warn('Session save warning on login:', saveErr.message);
+      if (saveErr) {
+        console.error('[AUTH-DEBUG] API login session save failed:', saveErr.message);
+        return res.status(500).json({ error: 'Could not start your session. Please try again.' });
+      }
+      console.log('[AUTH-DEBUG] API login session saved; sending success');
       return res.json({
         success: true,
         message: 'Logged in successfully',

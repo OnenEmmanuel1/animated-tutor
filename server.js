@@ -12,6 +12,14 @@ const Redis = require('ioredis');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const isVercel = process.env.VERCEL === '1';
+
+if (isVercel && !process.env.SESSION_SECRET) {
+  throw new Error('SESSION_SECRET must be set in Vercel for production sessions.');
+}
+if (isVercel && !process.env.REDIS_URL) {
+  throw new Error('REDIS_URL must be set in Vercel; in-memory sessions do not persist reliably across serverless invocations.');
+}
 
 // Trust all proxy hops (required for Vercel multi-tier reverse proxies)
 app.set('trust proxy', true);
@@ -46,7 +54,7 @@ const sessionConfig = {
     maxAge: 24 * 60 * 60 * 1000, // 24 hours
     httpOnly: true,
     sameSite: 'lax',
-    secure: false // Safe because Vercel enforces HTTPS on the edge domain
+    secure: isVercel
   }
 };
 
@@ -81,10 +89,11 @@ if (process.env.REDIS_URL) {
     sessionConfig.store = new RedisStore({ client: redisClient, prefix: 'tutortoon:' });
     console.log('Session store: Redis configured successfully');
   } catch (err) {
-    console.error('Redis configuration failed, falling back to memory store:', err.message);
+    console.error('Redis configuration failed:', err.message);
+    if (isVercel) throw err;
   }
 } else {
-  console.warn('REDIS_URL not set — using in-memory session store (local dev only).');
+  console.warn('REDIS_URL not set — using in-memory session store (local development only).');
 }
 
 app.use(session(sessionConfig));

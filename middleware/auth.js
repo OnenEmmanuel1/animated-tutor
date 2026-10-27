@@ -6,6 +6,8 @@ function requireLogin(req, res, next) {
   if (req.session && req.session.user) {
     return next();
   }
+
+  console.warn('[AUTH-DEBUG] protected route has no authenticated session', { path: req.originalUrl });
   
   if (req.originalUrl.startsWith('/api/')) {
     return res.status(401).json({ error: 'Unauthorized. Please log in.' });
