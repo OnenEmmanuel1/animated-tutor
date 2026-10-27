@@ -80,11 +80,11 @@
         // Redirect based on user role
         setTimeout(() => {
           if (data.user.role === 'teacher_admin') {
-            window.location.href = '/teacher-dashboard';
+            window.location.replace('/teacher-dashboard');
           } else {
-            window.location.href = '/parent-dashboard';
+            window.location.replace('/parent-dashboard');
           }
-        }, 800);
+        }, 500);
       }
     } catch (err) {
       console.error(err);

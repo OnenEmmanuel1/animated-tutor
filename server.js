@@ -25,6 +25,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Prevent Vercel Edge from caching dynamic responses and stripping Set-Cookie
+app.use((req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, private');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  res.set('Surrogate-Control', 'no-store');
+  next();
+});
+
 // 3. Express Session Middleware Setup
 // Use RedisStore in production (REDIS_URL set), fall back to memory store locally.
 const sessionConfig = {
