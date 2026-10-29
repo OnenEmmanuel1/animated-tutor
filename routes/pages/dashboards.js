@@ -144,6 +144,10 @@ router.get('/lesson/:id', requireLogin, requireLearner, async (req, res) => {
     const lessonId = parseInt(req.params.id, 10);
     const learnerId = req.session.learnerId;
 
+    if (!Number.isInteger(lessonId) || lessonId < 1) {
+      return res.status(404).send('Lesson not found');
+    }
+
     // Fetch lesson unit details
     const [lessons] = await db.query('SELECT * FROM lesson_units WHERE id = ?', [lessonId]);
     if (lessons.length === 0) {
@@ -153,20 +157,20 @@ router.get('/lesson/:id', requireLogin, requireLearner, async (req, res) => {
 
     // Fetch learner details for header
     const [learnerRows] = await db.query('SELECT name, avatar FROM learners WHERE id = ?', [learnerId]);
+    if (learnerRows.length === 0) {
+      req.session.learnerId = null;
+      return res.redirect('/learner-select');
+    }
     const learner = learnerRows[0];
 
-    // Track state: insert 'in_progress' status in progress_records if not exists
-    const [existing] = await db.query(
-      'SELECT status FROM progress_records WHERE learner_id = ? AND lesson_unit_id = ?',
+    // The unique learner/lesson key makes this safe when the page and progress
+    // API initialize the same record at nearly the same time. Preserve completion.
+    await db.query(
+      `INSERT INTO progress_records (learner_id, lesson_unit_id, status)
+       VALUES (?, ?, 'in_progress')
+       ON DUPLICATE KEY UPDATE status = IF(status = 'completed', status, 'in_progress')`,
       [learnerId, lessonId]
     );
-
-    if (existing.length === 0) {
-      await db.query(
-        'INSERT INTO progress_records (learner_id, lesson_unit_id, status) VALUES (?, ?, "in_progress")',
-        [learnerId, lessonId]
-      );
-    }
 
     res.render('pages/lesson', {
       user: req.session.user,
